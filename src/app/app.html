@@ -1,0 +1,43 @@
+
+<div class="container" ng-controller="AppCtrl">
+
+	<div class="page-header">
+		<h1>
+			Soccer Pad <small>The best way to note your scores</small>
+		</h1>
+	</div>
+
+	<div class="row clearfix">
+
+		<div class="col-md-8 column soccer-table">
+			<img src="img/table.jpg" />
+			
+			<div player-selector="table.A" players="model.players" position="A" 
+				style="left:90px; min-width:130px;" class="player-selector white"></div>
+
+			<div player-selector="table.B" players="model.players" position="B" 
+				style="left:340px; min-width:180px" class="player-selector white"></div>
+
+			<div player-selector="table.C" players="model.players" position="C" 
+				style="left:250px; min-width:170px" class="player-selector blue"></div>
+
+			<div player-selector="table.D" players="model.players" position="D" 
+				style="left:480px; min-width:140px" class="player-selector blue"></div>
+			
+		</div>
+
+		<div class="col-md-4 column">
+			<div class="scores">
+				
+				<h1>Score</h1>
+				
+				<input type="text" class="form-control pull-left score-input" ng-model="score.white" />
+				<input type="text" class="form-control pull-right score-input blue" ng-model="score.blue" />
+				
+				<button class="btn btn-warning btn-lg score-save" ng-disabled="isSaveDisabled()" ng-click="save()">Save match</button>
+			</div>
+			
+		</div>
+
+	</div>
+</div>

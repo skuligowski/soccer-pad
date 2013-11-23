@@ -1,0 +1,64 @@
+.player-selector {
+	position: absolute;
+	font-size:30px;
+	background: white;
+	border: 1px solid: black;
+	color:black;
+	top: 220px;
+}
+
+.player-selector:hover {
+	cursor:pointer;
+}
+
+
+.player-selector.blue {
+	top:0; 
+	background: blue;
+	border-color: black;
+	color: white;
+}
+
+.player-selector .position-badge {
+	padding: 5px; 
+	font-weight: bold;
+	border-right: 2px solid black; 
+	width: 40px;
+	display: inline-block;
+	text-align: center;
+}
+
+.player-selector.blue .position-badge {
+	border-color: white;
+}
+
+.player-selector .dropdown-label {
+	padding-right: 10px
+}
+
+.soccer-table {
+	padding-left: 40px
+}
+
+.scores {
+	text-align: center; 
+	width: 260px; 
+	margin: auto;
+}
+
+.score-input {
+	height: 120px;
+	width: 120px; 
+	font-size: 56px; 
+	text-align: center; 
+	display: inline-block;
+}
+
+.score-input.blue {
+	background: blue; 
+	color:white;
+}
+
+.score-save {
+	margin-top: 14px;
+}
