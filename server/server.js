@@ -120,6 +120,9 @@ var includeFile = function(dir, html) {
 	return html;
 }
 
+app.use(express.bodyParser());
+registerServices(app);
+
 app.use(function(req, res, next) {
 	if (isPartial(req.path)) 
 		return refreshPartials(next);	
@@ -138,7 +141,7 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(__dirname + '/' + srcDir, {maxAge: 0, index: '-'}));
 app.use(express.logger({stream: access_logfile }));
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
 	var partialName = path.basename(req.path),
 		partialPath = partialsMapping[partialName];
 
@@ -148,9 +151,8 @@ app.use(function(req, res, next) {
 		return res.send(html);
 	}
 	next();
-});
+});*/
 
-registerServices(app);
 refreshPartials();
 
 var port = parseInt(process.argv[2]) || 8000;

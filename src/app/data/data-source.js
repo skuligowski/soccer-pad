@@ -6,7 +6,15 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	};
 	$rootScope.model = model;
 
-	$http.get('/players').success(function(data) {
+	$http.get('/api/players').success(function(data) {
 		model.players = data;
 	});
+
+	return {
+		addPlayer: function(name) {
+			$http.post('/api/players/add', {name: name}).success(function(data) {
+				model.players = data;
+			});
+		}
+	}
 }]);

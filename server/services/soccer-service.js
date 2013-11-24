@@ -19,28 +19,32 @@ connect();
 
 exports.init = function(server) {
 
-	server.get('/players', function(req, res){
+	server.get('/api/players', function(req, res){
 		var collection = myDb.collection('test_players');
 		collection.find().sort({name: 1}).toArray(function(err, results) {
 			res.send(results);
 		});
 	});
 
-	server.get('/players/add/:name', function(req, res) {
+	server.post('/api/players/add', function(req, res) {
+		var data = req.body; 
 		var collection = myDb.collection('test_players'),
-			lcName = req.params.name.toLowerCase();
+			lcName = data.name.toLowerCase();
 		
 		collection.update(
 			{uid: lcName}, 
 			{ $set: {
-				name: req.params.name,
+				name: data.name,
 				uid: lcName
 			} }, 
-			{upsert: true, safe: false}
+			{upsert: true, safe: true},
+			function() {
+				collection.find().sort({name: 1}).toArray(function(err, results) {
+					res.send(results);
+				});
+			}
 		);
-		res.send({
-			result: 'ok'
-		});
+		
 
 	});
 }

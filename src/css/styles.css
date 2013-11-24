@@ -1,3 +1,7 @@
+html {
+	overflow-y: scroll; 
+}
+
 .player-selector {
 	position: absolute;
 	font-size:30px;
@@ -61,4 +65,31 @@
 
 .score-save {
 	margin-top: 14px;
+}
+
+
+
+
+
+.slide-animate {
+}
+ 
+.slide-animate.ng-enter, .slide-animate.ng-leave {
+  -webkit-transition:opacity ease-in-out 0.3s;
+  transition:opacity ease-in-out 0.3s;
+  opacity: 1;
+}
+ 
+.slide-animate.ng-enter {
+  opacity: 0;
+}
+.slide-animate.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+ 
+.slide-animate.ng-leave {
+  opacity: 0;
+}
+.slide-animate.ng-leave.ng-leave-active {
+  opacity: 0;
 }
