@@ -63,10 +63,7 @@ exports.find = function(db, callback) {
 					statsMap[players[i]._id] = reduceFunction(players[i]._id, []);
 			}
 
-			callback({
-				players: players,
-				stats: statsMap
-			});
+			callback(players, statsMap);
 		});
 	});
 }

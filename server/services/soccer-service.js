@@ -1,5 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var Players = require('./players');
+var Games = require('./games');
 var myDb;
 
 var connect = function() {
@@ -26,16 +27,18 @@ connect();
 
 exports.init = function(server) {
 
-	server.get('/api/players', function(req, res){
-		Players.find(myDb, function(players) {
-			res.send(players);
-		});
-	});
-	
-	server.get('/api/games', function(req, res){
-		var collection = myDb.collection('games');
-		collection.find().toArray(function(err, results) {
-			res.send(results);
+	server.get('/api/init', function(req, res) {
+		Players.find(myDb, function(players, playersStats) {
+			Games.find(myDb, function(games) {
+				var data = {
+					players: players,
+					stats: {
+						players: playersStats
+					},
+					games: games
+				};
+				res.send(data);
+			});
 		});
 	});
 
@@ -52,8 +55,14 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				Players.find(myDb, function(players) {
-					res.send(players)
+				Players.find(myDb, function(players, playersStats) {
+					var data = {
+						players: players,
+						stats: {
+							players: playersStats
+						}
+					};
+					res.send(data);
 				});
 			}
 		);
@@ -67,14 +76,20 @@ exports.init = function(server) {
 		console.log(game);
 		collection.insert(game, 
 			{safe: true},
-			function() {
+			function(err, newGame) {
 				Players.calculateStats(myDb, function(err) {
 					if (err)
 						console.log(err);
 
 					console.log('Players aggregates regenerated ... ');
-					Players.find(myDb, function(players) {
-						res.send(players)
+					Players.find(myDb, function(players, playersStats) {
+						var data = {
+							stats: {
+								players: playersStats
+							},
+							game: newGame
+						};
+						res.send(data)
 					});
 				});
 			}

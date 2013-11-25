@@ -25,13 +25,13 @@
 		</thead>
 		<tr ng-repeat="player in model.players">
 			<td>{{player.name}}</td>
-			<td>{{model.stats[player._id].games}}</td>
-			<td>{{model.stats[player._id].win}}</td>
-			<td>{{model.stats[player._id].loss}}</td>
-			<td>{{model.stats[player._id].winA}} / {{model.stats[player._id].lossA}}</td>
-			<td>{{model.stats[player._id].winB}} / {{model.stats[player._id].lossB}}</td>
-			<td>{{model.stats[player._id].winC}} / {{model.stats[player._id].lossC}}</td>
-			<td>{{model.stats[player._id].winD}} / {{model.stats[player._id].lossD}}</td>
+			<td>{{stats.players[player._id].games}}</td>
+			<td>{{stats.players[player._id].win}}</td>
+			<td>{{stats.players[player._id].loss}}</td>
+			<td>{{stats.players[player._id].winA}} / {{stats.players[player._id].lossA}}</td>
+			<td>{{stats.players[player._id].winB}} / {{stats.players[player._id].lossB}}</td>
+			<td>{{stats.players[player._id].winC}} / {{stats.players[player._id].lossC}}</td>
+			<td>{{stats.players[player._id].winD}} / {{stats.players[player._id].lossD}}</td>
 		</tr>
 	</table>
 
