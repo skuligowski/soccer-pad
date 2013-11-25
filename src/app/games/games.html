@@ -6,6 +6,7 @@
 				<th>White</th>
 				<th>Blue</th>
 				<th>Score</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tr ng-repeat="game in model.games">
@@ -13,6 +14,10 @@
 			<td>{{model.playersMapping[game.table.A].name}} / {{model.playersMapping[game.table.B].name}}</td>
 			<td>{{model.playersMapping[game.table.C].name}} / {{model.playersMapping[game.table.D].name}}</td>
 			<td>{{game.score.white}} : {{game.score.blue}}</td>
+			<td>
+				<span class="label label-info" ng-show="game.new">New</span>
+				<span class="label label-success" ng-show="!game.score.white || !game.score.blue">{{game.score.white}} : {{game.score.blue}}</span>
+			</td>
 		</tr>
 	</table>
 </div>

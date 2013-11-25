@@ -57,6 +57,10 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 			}
 		};
 		dataSource.addGame(game);
+		$scope.app.tab = {
+			route: 'games',
+			query: null
+		};
 	};
 
 	angular.forEach($scope.table, watchPosition);
