@@ -51,7 +51,10 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 				C: $scope.table.C._id,
 				D: $scope.table.D._id
 			},
-			score: $scope.score
+			score: {
+				white: parseInt($scope.score.white),
+				blue: parseInt($scope.score.blue)
+			}
 		};
 		dataSource.addGame(game);
 	};
