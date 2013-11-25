@@ -3,10 +3,28 @@
 <input type="text" ng-model="playerName" />
 <button ng-click="addPlayer()">Add player</button>
 
-<table class="table table-striped">
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Games</th>
+			<th>Win</th>
+			<th>Loss</th>
+			<th>A (win/loss)</th>
+			<th>B (win/loss)</th>
+			<th>C (win/loss)</th>
+			<th>D (win/loss)</th>
+		</tr>
+	</thead>
 	<tr ng-repeat="player in model.players">
 		<td>{{player.name}}</td>
-		<td></td>
+		<td>{{player.stats.games}}</td>
+		<td>{{player.stats.win}}</td>
+		<td>{{player.stats.loss}}</td>
+		<td>{{player.stats.winA}} / {{player.stats.lossA}}</td>
+		<td>{{player.stats.winB}} / {{player.stats.lossB}}</td>
+		<td>{{player.stats.winC}} / {{player.stats.lossC}}</td>
+		<td>{{player.stats.winD}} / {{player.stats.lossD}}</td>
 	</tr>
 </table>
 

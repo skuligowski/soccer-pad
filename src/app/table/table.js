@@ -53,7 +53,7 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 			},
 			score: $scope.score
 		};
-		console.log(game);
+		dataSource.addGame(game);
 	};
 
 	angular.forEach($scope.table, watchPosition);

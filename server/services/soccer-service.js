@@ -1,4 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
+var PlayersStats = require('./players-stats');
+var Players = require('./players');
 var myDb;
 
 var connect = function() {
@@ -9,9 +11,15 @@ var connect = function() {
       	return;	
       };
       myDb = db;
-      var collection = myDb.collection('test_players');
-		//collection.drop();
-
+      var players = myDb.collection('test_players');
+      var games = myDb.collection('test_games');
+      PlayersStats.calculate(myDb, function(err) {
+      	if (err) {
+      		console.log(err);
+      		return;
+      	}
+      	console.log('Players aggregates regenerated ... ');
+      });
     });  
 }
 
@@ -20,8 +28,14 @@ connect();
 exports.init = function(server) {
 
 	server.get('/api/players', function(req, res){
-		var collection = myDb.collection('test_players');
-		collection.find().sort({name: 1}).toArray(function(err, results) {
+		Players.find(myDb, function(players) {
+			res.send(players)
+		});
+	});
+	
+	server.get('/api/games', function(req, res){
+		var collection = myDb.collection('test_games');
+		collection.find().toArray(function(err, results) {
 			res.send(results);
 		});
 	});
@@ -39,12 +53,34 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				collection.find().sort({name: 1}).toArray(function(err, results) {
-					res.send(results);
+				Players.find(myDb, function(players) {
+					res.send(players)
 				});
 			}
 		);
 		
+
+	});
+
+	server.post('/api/games/add', function(req, res) {
+		var game = req.body; 
+		game.date = new Date();
+		var collection = myDb.collection('test_games');
+		console.log(game);
+		collection.insert(game, 
+			{safe: true},
+			function() {
+				PlayersStats.calculate(myDb, function(err) {
+					if (err)
+						console.log(err);
+
+					console.log('Players aggregates regenerated ... ');
+					Players.find(myDb, function(players) {
+						res.send(players)
+					});
+				});
+			}
+		);	
 
 	});
 }

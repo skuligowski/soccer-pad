@@ -71,25 +71,25 @@ html {
 
 
 
-.slide-animate {
+.view-animate {
 }
  
-.slide-animate.ng-enter, .slide-animate.ng-leave {
+.view-animate.ng-enter, .view-animate.ng-leave {
   -webkit-transition:opacity ease-in-out 0.3s;
   transition:opacity ease-in-out 0.3s;
   opacity: 1;
 }
  
-.slide-animate.ng-enter {
+.view-animate.ng-enter {
   opacity: 0;
 }
-.slide-animate.ng-enter.ng-enter-active {
+.view-animate.ng-enter.ng-enter-active {
   opacity: 1;
 }
  
-.slide-animate.ng-leave {
+.view-animate.ng-leave {
   opacity: 0;
 }
-.slide-animate.ng-leave.ng-leave-active {
+.view-animate.ng-leave.ng-leave-active {
   opacity: 0;
 }
