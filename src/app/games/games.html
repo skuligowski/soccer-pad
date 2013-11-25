@@ -6,18 +6,19 @@
 				<th>White</th>
 				<th>Blue</th>
 				<th>Score</th>
-				<th></th>
+				<th>Label</th>
 			</tr>
 		</thead>
-		<tr ng-repeat="game in model.games">
-			<td>{{game.date}}</td>
-			<td>{{model.playersMapping[game.table.A].name}} / {{model.playersMapping[game.table.B].name}}</td>
-			<td>{{model.playersMapping[game.table.C].name}} / {{model.playersMapping[game.table.D].name}}</td>
-			<td>{{game.score.white}} : {{game.score.blue}}</td>
-			<td>
+		<tr ng-repeat="game in paged.games" >
+			<td class="col-xs-3">{{game.date}}</td>
+			<td class="col-xs-3">{{model.playersMapping[game.table.A].name}} / {{model.playersMapping[game.table.B].name}}</td>
+			<td class="col-xs-3">{{model.playersMapping[game.table.C].name}} / {{model.playersMapping[game.table.D].name}}</td>
+			<td class="col-xs-1">{{game.score.white}} : {{game.score.blue}}</td>
+			<td class="col-xs-2">
 				<span class="label label-info" ng-show="game.new">New</span>
 				<span class="label label-success" ng-show="!game.score.white || !game.score.blue">{{game.score.white}} : {{game.score.blue}}</span>
 			</td>
 		</tr>
 	</table>
+	<div pager source="model.games" out="paged.games" page-size="10" buttons="5"></div>
 </div>

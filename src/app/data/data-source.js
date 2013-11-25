@@ -39,6 +39,7 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 				stats.players = data.stats.players;
 				data.game.new = true;
 				model.games.splice(0, 0, data.game);
+				model.games = model.games.concat([]);
 			});
 		} 
 	}
