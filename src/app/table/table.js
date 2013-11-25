@@ -34,7 +34,7 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 		if (blueScore < 0 || blueScore > 10)
 			return true;
 
-		if (whiteScore == 10 && whiteScore == 10)
+		if (whiteScore == 10 && blueScore == 10)
 			return true;
 		
 		if (whiteScore != 10 && blueScore != 10)

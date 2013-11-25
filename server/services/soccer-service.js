@@ -1,19 +1,18 @@
 var MongoClient = require('mongodb').MongoClient;
-var PlayersStats = require('./players-stats');
 var Players = require('./players');
 var myDb;
 
 var connect = function() {
-	MongoClient.connect('mongodb://127.0.0.1:27017/test', function(err, db) {
+	MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function(err, db) {
 
       if(err) { 
       	console.log(err);
       	return;	
       };
       myDb = db;
-      var players = myDb.collection('test_players');
-      var games = myDb.collection('test_games');
-      PlayersStats.calculate(myDb, function(err) {
+      var players = myDb.collection('players');
+      var games = myDb.collection('games');
+      Players.calculateStats(myDb, function(err) {
       	if (err) {
       		console.log(err);
       		return;
@@ -29,12 +28,12 @@ exports.init = function(server) {
 
 	server.get('/api/players', function(req, res){
 		Players.find(myDb, function(players) {
-			res.send(players)
+			res.send(players);
 		});
 	});
 	
 	server.get('/api/games', function(req, res){
-		var collection = myDb.collection('test_games');
+		var collection = myDb.collection('games');
 		collection.find().toArray(function(err, results) {
 			res.send(results);
 		});
@@ -42,7 +41,7 @@ exports.init = function(server) {
 
 	server.post('/api/players/add', function(req, res) {
 		var data = req.body; 
-		var collection = myDb.collection('test_players'),
+		var collection = myDb.collection('players'),
 			lcName = data.name.toLowerCase();
 		
 		collection.update(
@@ -58,19 +57,18 @@ exports.init = function(server) {
 				});
 			}
 		);
-		
 
 	});
 
 	server.post('/api/games/add', function(req, res) {
 		var game = req.body; 
 		game.date = new Date();
-		var collection = myDb.collection('test_games');
+		var collection = myDb.collection('games');
 		console.log(game);
 		collection.insert(game, 
 			{safe: true},
 			function() {
-				PlayersStats.calculate(myDb, function(err) {
+				Players.calculateStats(myDb, function(err) {
 					if (err)
 						console.log(err);
 
