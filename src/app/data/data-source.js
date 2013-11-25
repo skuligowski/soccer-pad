@@ -3,6 +3,7 @@ angular.module('data.dataSource', []).
 factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	var model = { 
 		players: [],
+		playersMapping: {},
 		games: []
 	};
 	var stats = {
@@ -11,8 +12,16 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	$rootScope.model = model;
 	$rootScope.stats = stats;
 
+	var createPlayersMapping = function(players) {
+		var mapping = {};
+		for(var i = 0; i < players.length; i++)
+			mapping[players[i]._id] = players[i];
+		return mapping;
+	};
+
 	$http.get('/api/init').success(function(data) {
 		model.players = data.players;
+		model.playersMapping = createPlayersMapping(data.players);
 		model.games = data.games;
 		stats.players = data.stats.players;
 	});
@@ -21,6 +30,7 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 		addPlayer: function(name) {
 			$http.post('/api/players/add', {name: name}).success(function(data) {
 				model.players = data.players;
+				model.playersMapping = createPlayersMapping(data.players);
 				stats.players = data.stats.players;
 			});
 		},

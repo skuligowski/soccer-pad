@@ -76,7 +76,7 @@ exports.init = function(server) {
 		console.log(game);
 		collection.insert(game, 
 			{safe: true},
-			function(err, newGame) {
+			function(err, addedGames) {
 				Players.calculateStats(myDb, function(err) {
 					if (err)
 						console.log(err);
@@ -87,7 +87,7 @@ exports.init = function(server) {
 							stats: {
 								players: playersStats
 							},
-							game: newGame
+							game: addedGames[0]
 						};
 						res.send(data)
 					});
