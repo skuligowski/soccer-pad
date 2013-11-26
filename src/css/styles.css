@@ -17,31 +17,32 @@ html {
 
 
 .player-selector.blue {
-	top:0; 
+	top: -12px; 
 	background: blue;
 	border-color: black;
 	color: white;
 }
 
 .player-selector .position-badge {
-	padding: 5px; 
+	font-size:16px; 
+	background-color: black; 
+	color: white;
 	font-weight: bold;
-	border-right: 2px solid black; 
-	width: 40px;
-	display: inline-block;
-	text-align: center;
 }
 
 .player-selector.blue .position-badge {
-	border-color: white;
+	background-color: white; 
+	color: black;
 }
 
 .player-selector .dropdown-label {
-	padding-right: 10px
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .soccer-table {
-	padding-left: 40px
+	padding-left: 40px;
+	margin-top: 10px;
 }
 
 .scores {
