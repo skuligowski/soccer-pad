@@ -7,10 +7,9 @@ var express = require('express'),
 
 var app = express(),
 	data = {},
-	srcDir = '../src', 
+	srcDir = path.join('..', 'src'), 
 	partialExt = '.html',
 	partialsCache = {},
-	partialsMapping = {},
 
 	walk = function(dir, done) {
 		var results = [];
@@ -20,7 +19,7 @@ var app = express(),
 			(function next() {
 				var file = list[i++];
 				if (!file) return done(null, results);
-				file = dir + '/' + file;
+				file = path.join(dir, file);
 				fs.stat(file, function(err, stat) {
 					if (stat && stat.isDirectory()) {
 						walk(file, function(err, res) {
@@ -56,18 +55,11 @@ var registerServices = function(app) {
 var refreshPartials = function(callback) {
 	walk(srcDir, function(err, files) {
 		for(var i = 0; i < files.length; i++) {
-			if (isPartial(files[i])) {      
-				
+			if (isPartial(files[i])) {
 				var partial = fs.readFileSync(files[i]);
 				partialsCache[files[i]] = renderTemplates(partial.toString());
 
-				var name = path.basename(files[i], partialExt);
-				name = name.replace(/(-|_)(.)/g, function(all, firstSign, letter) {
-					return letter.toUpperCase();
-				});
-				partialsMapping[name] = files[i];
-
-				console.log('Refreshing ' + name + ' (' + files[i] + ')');				
+				console.log('Refreshing ' + files[i]);				
 			}
 		}
 		
@@ -106,7 +98,7 @@ var includeFile = function(dir, html) {
 		
 	for(var i = 0, max = matches.length; i < max; i++) {
 		var src = getAttr('src', matches[i]),
-			absolutePath = path.normalize(dir + '/' + src),
+			absolutePath = path.join(dir, src),
 			partialContent = partialsCache[absolutePath];
 		
 		if (typeof partialContent !== "undefined") {			
@@ -120,9 +112,6 @@ var includeFile = function(dir, html) {
 	return html;
 }
 
-app.use(express.bodyParser());
-registerServices(app);
-
 app.use(function(req, res, next) {
 	if (isPartial(req.path)) 
 		return refreshPartials(next);	
@@ -132,27 +121,18 @@ app.use(function(req, res, next) {
 	if (!isPartial(req.path))
 		return next();
 	
-	var partialHtml = partialsCache[srcDir + req.path];
+	var partialHtml = partialsCache[path.join(srcDir, req.path)];
 	if (!partialHtml)
 		return next();
 
 	var html = includeFile(srcDir, partialHtml);
 	res.send(html);
 });
-app.use(express.static(__dirname + '/' + srcDir, {maxAge: 0, index: '-'}));
+app.use(express.static(path.join(__dirname, srcDir), {maxAge: 0, index: '-'}));
+app.use(express.bodyParser());
 app.use(express.logger({stream: access_logfile }));
-/*app.use(function(req, res, next) {
-	var partialName = path.basename(req.path),
-		partialPath = partialsMapping[partialName];
 
-	if (partialPath) {
-		console.log('Template ' + partialName + ' requested, found at: ' + partialPath);
-		var html = includeFile(path.dirname(partialPath), partialsCache[partialPath]);
-		return res.send(html);
-	}
-	next();
-});*/
-
+registerServices(app);
 refreshPartials();
 
 var port = parseInt(process.argv[2]) || 8000;
