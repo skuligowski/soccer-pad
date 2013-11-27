@@ -5,9 +5,7 @@ html {
 .player-selector {
 	position: absolute;
 	font-size:30px;
-	background: white;
 	border: 1px solid: black;
-	color:black;
 	top: 220px;
 }
 
@@ -18,9 +16,6 @@ html {
 
 .player-selector.blue {
 	top: -12px; 
-	background: blue;
-	border-color: black;
-	color: white;
 }
 
 .player-selector .position-badge {
@@ -57,11 +52,6 @@ html {
 	font-size: 56px; 
 	text-align: center; 
 	display: inline-block;
-}
-
-.score-input.blue {
-	background: blue; 
-	color:white;
 }
 
 .score-save {

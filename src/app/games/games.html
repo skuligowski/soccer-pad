@@ -3,16 +3,24 @@
 		<thead>
 			<tr>
 				<th>Date</th>
-				<th>White</th>
-				<th>Blue</th>
+				<th style="text-align:right;">White defender</th>
+				<th>White attacker</th>
+				<th></th>
+				<th style="text-align:right;">Blue defender</th>
+				<th>Blue attacker</th>
+				<th></th>
 				<th>Score</th>
 				<th>Label</th>
 			</tr>
 		</thead>
 		<tr ng-repeat="game in paged.games" >
 			<td class="col-xs-3">{{game.date}}</td>
-			<td class="col-xs-3">{{model.playersMapping[game.table.A].name}} / {{model.playersMapping[game.table.B].name}}</td>
-			<td class="col-xs-3">{{model.playersMapping[game.table.C].name}} / {{model.playersMapping[game.table.D].name}}</td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.A].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.table.B].name}}</td>
+			<td class="col-xs-1"></td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.D].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.table.C].name}}</td>
+			<td class="col-xs-1"></td>
 			<td class="col-xs-1">{{game.score.white}} : {{game.score.blue}}</td>
 			<td class="col-xs-2">
 				<span class="label label-info" ng-show="game.new">New</span>
