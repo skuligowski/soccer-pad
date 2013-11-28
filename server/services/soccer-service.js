@@ -40,6 +40,7 @@ exports.init = function(server) {
 				res.send(data);
 			});
 		});
+        Players.calculateRatings(myDb);
 	});
 
 	server.post('/api/players/add', function(req, res) {

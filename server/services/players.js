@@ -1,6 +1,10 @@
+var jst = require('jstrueskill');
+var blueTeam= jst.Team("blueTeam");
+var whiteTeam= jst.Team("whiteTeam")
+
+
 var mapFunction = function() {
 	var whiteWin = this.score.white > this.score.blue;
-
 	for(var position in this.table) {
 		var whitePosition = position == 'A' | position == 'B',
 			o = {
@@ -48,6 +52,45 @@ exports.calculateStats = function(db, callback) {
 		reduceFunction,
 		{ out: "players_stats" },
 		callback);
+}
+
+exports.calculateRatings = function(db) {
+
+    db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
+        db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
+            var gameInfo = new jst.GameInfo.getDefaultGameInfo();
+
+            var playerMap = {};
+            var playerRatingMap = {};
+            for (var playerIndex in players) {
+                var player = new jst.Player([players[playerIndex]._id]);
+                playerMap[players[playerIndex]._id] = player;
+                playerRatingMap[player] = gameInfo.getDefaultRating();
+
+            }
+
+            for (var gameIndex in games) {
+                var game = games[gameIndex];
+                var blueTeam= new jst.Team("blueTeam");
+                var whiteTeam=new jst.Team("whiteTeam");
+
+                blueTeam.addPlayer(playerMap[game.table['A']],playerRatingMap[playerMap[game.table['A']]]);
+                blueTeam.addPlayer(playerMap[game.table['B']],playerRatingMap[playerMap[game.table['B']]]);
+                whiteTeam.addPlayer(playerMap[game.table['C']],playerRatingMap[playerMap[game.table['C']]]);
+                whiteTeam.addPlayer(playerMap[game.table['D']],playerRatingMap[playerMap[game.table['D']]]);
+                var rankArray = game.score.blue > game.score.white ? [1,2] : [2,1];
+                console.log(blueTeam);
+                var playerRatingMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
+                  [blueTeam,whiteTeam], rankArray);
+
+                console.log(playerRatingMap);
+
+
+            }
+
+        });
+    });
+
 }
 
 exports.find = function(db, callback) {
