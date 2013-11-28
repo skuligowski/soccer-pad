@@ -98,19 +98,26 @@ var includeFile = function(dir, html) {
 		
 	for(var i = 0, max = matches.length; i < max; i++) {
 		var src = getAttr('src', matches[i]),
-			absolutePath = path.join(dir, src),
-			partialContent = partialsCache[absolutePath];
+			partialPath = path.join(dir, src),
+			partialContent = partialsCache[partialPath];
 		
 		if (typeof partialContent !== "undefined") {			
-			partialContent = includeFile(path.dirname(absolutePath), partialContent);
+			partialContent = includeFile(path.dirname(partialPath), partialContent);
 			html = html.replace(matches[i], partialContent);
 		} else {
-			console.log('Partial not found:' + absolutePath);
+			console.log('Partial not found:' + partialPath);
 		}
 	}
 
 	return html;
 }
+
+
+app.set('views', srcDir);
+app.engine('html', function(viewPath, options, fn) {
+	var viewHtml = partialsCache[viewPath];
+	fn(null, includeFile(path.dirname(viewPath), viewHtml));
+});
 
 app.use(function(req, res, next) {
 	if (isPartial(req.path)) 
@@ -121,11 +128,12 @@ app.use(function(req, res, next) {
 	if (!isPartial(req.path))
 		return next();
 	
-	var partialHtml = partialsCache[path.join(srcDir, req.path)];
+	var partialPath = path.join(srcDir, req.path);
+		partialHtml = partialsCache[partialPath];
 	if (!partialHtml)
 		return next();
 
-	var html = includeFile(srcDir, partialHtml);
+	var html = includeFile(path.dirname(partialPath), partialHtml);
 	res.send(html);
 });
 app.use(express.static(path.join(__dirname, srcDir), {maxAge: 0, index: '-'}));
