@@ -24,6 +24,7 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 		model.playersMapping = createPlayersMapping(data.players);
 		model.games = data.games;
 		stats.players = data.stats.players;
+        stats.ratings = data.stats.ratings;
 	});
 
 	return {

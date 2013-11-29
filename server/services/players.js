@@ -54,72 +54,6 @@ exports.calculateStats = function(db, callback) {
 		callback);
 }
 
-exports.calculateRatings = function(db) {
-
-
-    db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
-        db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
-            var gameInfo = new jst.GameInfo.getDefaultGameInfo();
-            var playerMap = {};
-            var playerRatingMap = {};
-            var playerNameMap= {};
-
-            for (var playerIndex in players) {
-                var player = new jst.Player([players[playerIndex]._id]);
-                playerMap[players[playerIndex]._id] = player;
-                playerRatingMap[player] = gameInfo.getDefaultRating();
-                playerNameMap[players[playerIndex]._id] = [players[playerIndex].name];
-
-            }
-            for (var key in playerMap) {
-                var playerRating =  playerRatingMap[playerMap[key]]
-                if (playerRating != undefined) {
-                    //console.log( playerNameMap[key] );
-                    //console.log( playerNameMap[key] +":"+playerRating.mean +","+playerRating.standardDeviation);
-                }
-
-            }
-
-            for (var gameIndex in games) {
-                //console.log('processing game '+gameIndex);
-                var game = games[gameIndex];
-                //console.log(game);
-                var blueTeam= new jst.Team("blueTeam");
-                var whiteTeam=new jst.Team("whiteTeam");
-
-                blueTeam.addPlayer(playerMap[game.table['A']],playerRatingMap[playerMap[game.table['A']]]);
-                blueTeam.addPlayer(playerMap[game.table['B']],playerRatingMap[playerMap[game.table['B']]]);
-                whiteTeam.addPlayer(playerMap[game.table['C']],playerRatingMap[playerMap[game.table['C']]]);
-                whiteTeam.addPlayer(playerMap[game.table['D']],playerRatingMap[playerMap[game.table['D']]]);
-                var rankArray = game.score.blue > game.score.white ? [1,2] : [2,1];
-
-
-                var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
-                    [blueTeam,whiteTeam], rankArray);
-
-                for (var resultKey in resultMap) {
-                     playerRatingMap[resultKey] = resultMap[resultKey];
-                }
-
-            }
-
-
-
-            for (var key in playerMap) {
-                var playerRating =  playerRatingMap[playerMap[key]]
-                if (playerRating != undefined) {
-                    console.log( playerNameMap[key] );
-                    console.log( playerNameMap[key] +":"+playerRating.mean +","+playerRating.standardDeviation);
-                }
-
-            }
-
-
-        });
-    });
-
-
-}
 
 exports.find = function(db, callback) {
 	db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
@@ -134,7 +68,56 @@ exports.find = function(db, callback) {
 					statsMap[players[i]._id] = reduceFunction(players[i]._id, []);
 			}
 
-			callback(players, statsMap);
+            calculateRatings(db, players, statsMap, callback);
+
+
 		});
 	});
+}
+
+calculateRatings = function(db, players, statsMap, callback) {
+
+    db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
+        var idplayerMap = {};
+        var gameInfo = new jst.GameInfo.getDefaultGameInfo();
+        var playerMap = {},playerRatingMap = {};
+
+        for (var playerIndex in players) {
+            var player = new jst.Player([players[playerIndex]._id]);
+            playerMap[players[playerIndex]._id] = player;
+            playerRatingMap[player] = gameInfo.getDefaultRating();
+        }
+
+        for (var gameIndex in games) {
+            game = games[gameIndex];
+
+            var rankArray = game.score.blue > game.score.white ? [2,1] : [1,2];
+
+            var blueTeam= new jst.Team("blueTeam");
+            var whiteTeam=new jst.Team("whiteTeam");
+
+            for (var position in game.table) {
+                var currentPlayer = playerMap[game.table[position]];
+
+                (position == 'A' || position == 'B')
+                    ?  blueTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer])
+                    :  whiteTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer]) ;
+            }
+            var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
+                [blueTeam,whiteTeam], rankArray);
+            for (var resultKey in resultMap) {
+                 playerRatingMap[resultKey] = resultMap[resultKey];
+            }
+        }
+
+        for (var playerId in playerMap) {
+            var currentRating =  playerRatingMap[playerMap[playerId]];
+            idplayerMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
+        }
+        callback(players, statsMap, idplayerMap);
+
+    });
+
+
+
 }

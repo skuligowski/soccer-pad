@@ -28,19 +28,21 @@ connect();
 exports.init = function(server) {
 
 	server.get('/api/init', function(req, res) {
-		Players.find(myDb, function(players, playersStats) {
+		Players.find(myDb, function(players, playersStats, playerRatings) {
 			Games.find(myDb, function(games) {
 				var data = {
 					players: players,
 					stats: {
-						players: playersStats
+						players: playersStats,
+                        ratings : playerRatings
 					},
 					games: games
+
 				};
 				res.send(data);
 			});
 		});
-        Players.calculateRatings(myDb);
+
 	});
 
 	server.post('/api/players/add', function(req, res) {
@@ -56,11 +58,12 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				Players.find(myDb, function(players, playersStats) {
+				Players.find(myDb, function(players, playersStats, playerRatings) {
 					var data = {
 						players: players,
 						stats: {
-							players: playersStats
+							players: playersStats,
+                            ratings : playerRatings
 						}
 					};
 					res.send(data);
@@ -83,10 +86,11 @@ exports.init = function(server) {
 						console.log(err);
 
 					console.log('Players aggregates regenerated ... ');
-					Players.find(myDb, function(players, playersStats) {
+					Players.find(myDb, function(players, playersStats, playerRatings) {
 						var data = {
 							stats: {
-								players: playersStats
+								players: playersStats,
+                                ratings : playerRatings
 							},
 							game: addedGames[0]
 						};
