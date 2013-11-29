@@ -1,7 +1,6 @@
 var express = require('express'),
 	fs = require('fs'),
 	path = require('path'),
-	moment = require('moment'),
 	access_logfile = fs.createWriteStream('./access.log', {flags: 'a'});
 	
 
@@ -55,11 +54,19 @@ var registerServices = function(app) {
 var refreshPartials = function(callback) {
 	walk(srcDir, function(err, files) {
 		for(var i = 0; i < files.length; i++) {
-			if (isPartial(files[i])) {
-				var partial = fs.readFileSync(files[i]);
-				partialsCache[files[i]] = renderTemplates(partial.toString());
+			var partialPath = files[i];
+			if (isPartial(partialPath)) {
+				var mtime = fs.statSync(partialPath).mtime,
+					currentPartial = partialsCache[partialPath];
 
-				console.log('Refreshing ' + files[i]);				
+				if (!currentPartial || currentPartial.mtime < mtime) {
+					var partial = fs.readFileSync(partialPath);
+					partialsCache[partialPath] = {
+						content: renderTemplates(partial.toString()),
+						mtime: mtime
+					}
+					console.log('Refreshing ' + partialPath);				
+				}
 			}
 		}
 		
@@ -99,10 +106,10 @@ var includeFile = function(dir, html) {
 	for(var i = 0, max = matches.length; i < max; i++) {
 		var src = getAttr('src', matches[i]),
 			partialPath = path.join(dir, src),
-			partialContent = partialsCache[partialPath];
+			partial = partialsCache[partialPath];
 		
-		if (typeof partialContent !== "undefined") {			
-			partialContent = includeFile(path.dirname(partialPath), partialContent);
+		if (typeof partial !== "undefined") {			
+			var partialContent = includeFile(path.dirname(partialPath), partial.content);
 			html = html.replace(matches[i], partialContent);
 		} else {
 			console.log('Partial not found:' + partialPath);
@@ -115,10 +122,11 @@ var includeFile = function(dir, html) {
 
 app.set('views', srcDir);
 app.engine('html', function(viewPath, options, fn) {
-	var viewHtml = partialsCache[viewPath];
-	fn(null, includeFile(path.dirname(viewPath), viewHtml));
+	refreshPartials(function() {
+		var viewHtml = partialsCache[viewPath].content;
+		fn(null, includeFile(path.dirname(viewPath), viewHtml));
+	});
 });
-
 app.use(function(req, res, next) {
 	if (isPartial(req.path)) 
 		return refreshPartials(next);	
@@ -129,11 +137,11 @@ app.use(function(req, res, next) {
 		return next();
 	
 	var partialPath = path.join(srcDir, req.path);
-		partialHtml = partialsCache[partialPath];
-	if (!partialHtml)
+		partial = partialsCache[partialPath];
+	if (!partial)
 		return next();
 
-	var html = includeFile(path.dirname(partialPath), partialHtml);
+	var html = includeFile(path.dirname(partialPath), partial.content);
 	res.send(html);
 });
 app.use(express.static(path.join(__dirname, srcDir), {maxAge: 0, index: '-'}));
