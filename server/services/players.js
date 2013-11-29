@@ -56,21 +56,34 @@ exports.calculateStats = function(db, callback) {
 
 exports.calculateRatings = function(db) {
 
+
     db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
         db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
             var gameInfo = new jst.GameInfo.getDefaultGameInfo();
-
             var playerMap = {};
             var playerRatingMap = {};
+            var playerNameMap= {};
+
             for (var playerIndex in players) {
                 var player = new jst.Player([players[playerIndex]._id]);
                 playerMap[players[playerIndex]._id] = player;
                 playerRatingMap[player] = gameInfo.getDefaultRating();
+                playerNameMap[players[playerIndex]._id] = [players[playerIndex].name];
+
+            }
+            for (var key in playerMap) {
+                var playerRating =  playerRatingMap[playerMap[key]]
+                if (playerRating != undefined) {
+                    //console.log( playerNameMap[key] );
+                    //console.log( playerNameMap[key] +":"+playerRating.mean +","+playerRating.standardDeviation);
+                }
 
             }
 
             for (var gameIndex in games) {
+                //console.log('processing game '+gameIndex);
                 var game = games[gameIndex];
+                //console.log(game);
                 var blueTeam= new jst.Team("blueTeam");
                 var whiteTeam=new jst.Team("whiteTeam");
 
@@ -79,17 +92,32 @@ exports.calculateRatings = function(db) {
                 whiteTeam.addPlayer(playerMap[game.table['C']],playerRatingMap[playerMap[game.table['C']]]);
                 whiteTeam.addPlayer(playerMap[game.table['D']],playerRatingMap[playerMap[game.table['D']]]);
                 var rankArray = game.score.blue > game.score.white ? [1,2] : [2,1];
-                console.log(blueTeam);
-                var playerRatingMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
-                  [blueTeam,whiteTeam], rankArray);
 
-                console.log(playerRatingMap);
 
+                var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
+                    [blueTeam,whiteTeam], rankArray);
+
+                for (var resultKey in resultMap) {
+                     playerRatingMap[resultKey] = resultMap[resultKey];
+                }
 
             }
 
+
+
+            for (var key in playerMap) {
+                var playerRating =  playerRatingMap[playerMap[key]]
+                if (playerRating != undefined) {
+                    console.log( playerNameMap[key] );
+                    console.log( playerNameMap[key] +":"+playerRating.mean +","+playerRating.standardDeviation);
+                }
+
+            }
+
+
         });
     });
+
 
 }
 
