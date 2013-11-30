@@ -1,7 +1,5 @@
 var jst = require('jstrueskill');
 
-
-
 exports.calculate = function(db, callback) {
     db.collection('players_ratings').drop();
     db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
@@ -51,11 +49,7 @@ exports.calculate = function(db, callback) {
 
         });
     });
-
-
-
 }
-
 
 exports.find = function(db,  callback) {
     db.collection('players_ratings').find().toArray(function(err, ratings) {

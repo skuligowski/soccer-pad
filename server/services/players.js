@@ -62,7 +62,6 @@ exports.find = function(db, callback) {
 				if (!stats)
 					statsMap[players[i]._id] = reduceFunction(players[i]._id, []);
 			}
-
             callback(  players, statsMap);
 
 		});

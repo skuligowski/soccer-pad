@@ -22,23 +22,19 @@ connect();
 exports.init = function(server) {
 
 	server.get('/api/init', function(req, res) {
-		Players.find(myDb, function(players, playersStats) {
-            Ratings.find (myDb, function(playerRatings) {
-                Games.find(myDb, function(games) {
-                    var data = {
-                        players: players,
-                        stats: {
-                            players: playersStats,
-                            ratings : playerRatings
-                        },
-                        games: games
-
-                    };
-                    res.send(data);
-                });
+		retrieveStats(myDb, function(players, playersStats, playerRatings)  {
+            Games.find(myDb, function(games) {
+                var data = {
+                    players: players,
+                    stats: {
+                        players: playersStats,
+                        ratings : playerRatings
+                    },
+                    games: games
+                };
+                res.send(data);
             });
 		});
-
 	});
 
 	server.post('/api/players/add', function(req, res) {
@@ -54,21 +50,18 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				Players.find(myDb, function(players, playersStats) {
-                    Ratings.find(myDb, function(playerRatings) {
-                        var data = {
-                            players: players,
-                            stats: {
-                                players: playersStats,
-                                ratings : playerRatings
-                            }
-                        };
-                        res.send(data);
-                    });
+				retrieveStats(myDb, function(players, playersStats, playerRatings) {
+                    var data = {
+                        players: players,
+                        stats: {
+                            players: playersStats,
+                            ratings : playerRatings
+                        }
+                    };
+                    res.send(data);
 				});
 			}
 		);
-
 	});
 
 	server.post('/api/games/add', function(req, res) {
@@ -80,23 +73,20 @@ exports.init = function(server) {
 			{safe: true},
 			function(err, addedGames) {
 				calculateStats(myDb, function() {
-                    Players.find(myDb, function(players, playersStats) {
-                        Ratings.find(myDb, function(playerRatings) {
-                            var data = {
-                                stats: {
-                                    players: playersStats,
-                                    ratings : playerRatings
-                                },
-                                game: addedGames[0]
-                            };
-                            res.send(data)
-                        });
+                    retrieveStats(myDb, function(players, playersStats, playerRatings) {
+                        var data = {
+                            stats: {
+                                players: playersStats,
+                                ratings : playerRatings
+                            },
+                            game: addedGames[0]
+                        };
+                       res.send(data)
                     });
                 });
 
 			}
 		);	
-
 	});
 }
 
@@ -106,9 +96,15 @@ var calculateStats = function(db, callback ) {
             errP && console.log(errP);
             errR && console.log(errR);
             console.log('Players aggregates regenerated ... ');
+            callback && callback();
         });
     });
-    callback && callback();
 }
 
-
+var retrieveStats = function(db, callback ) {
+    Players.find(db, function(players, playersStats) {
+        Ratings.find(db, function(playerRatings) {
+            callback && callback(players, playersStats, playerRatings);
+        });
+    });
+}
