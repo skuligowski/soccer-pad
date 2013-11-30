@@ -13,25 +13,7 @@ var connect = function() {
         myDb = db;
         var players = myDb.collection('players');
         var games = myDb.collection('games');
-        Players.calculateStats(myDb, function (err) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-
-            console.log('Players aggregates regenerated ... ');
-        });
-
-        Ratings.calculate(myDb, function (err) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-
-
-        });
-
-
+        calculateStats(myDb);
     });
 }
 
@@ -97,30 +79,36 @@ exports.init = function(server) {
 		collection.insert(game, 
 			{safe: true},
 			function(err, addedGames) {
-				Players.calculateStats(myDb, function(err) {
-                    Ratings.calculate(myDb, function(err) {
-                        if (err)
-                            console.log(err);
-                        console.log('Players aggregates regenerated ... ');
-                        Players.find(myDb, function(players, playersStats) {
-                            Ratings.find(myDb, function(playerRatings) {
-                                var data = {
-                                    stats: {
-                                        players: playersStats,
-                                        ratings : playerRatings
-                                    },
-                                    game: addedGames[0]
-                                };
-                                res.send(data)
-                            });
+				calculateStats(myDb, function() {
+                    Players.find(myDb, function(players, playersStats) {
+                        Ratings.find(myDb, function(playerRatings) {
+                            var data = {
+                                stats: {
+                                    players: playersStats,
+                                    ratings : playerRatings
+                                },
+                                game: addedGames[0]
+                            };
+                            res.send(data)
                         });
                     });
-                    console.log('Players aggregates regenerated ... ');
                 });
+
 			}
 		);	
 
 	});
+}
+
+var calculateStats = function(db, callback ) {
+    Players.calculateStats(db, function(errP) {
+        Ratings.calculate(db, function(errR) {
+            errP && console.log(errP);
+            errR && console.log(errR);
+            console.log('Players aggregates regenerated ... ');
+        });
+    });
+    callback && callback();
 }
 
 
