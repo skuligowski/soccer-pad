@@ -5,23 +5,22 @@ var Ratings = require('./ratings');
 var myDb;
 
 var connect = function() {
-	MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function(err, db) {
-
-      if(err) {
-        console.log(err);
-        return;
-      };
-      myDb = db;
-      var players = myDb.collection('players');
-      var games = myDb.collection('games');
-      Players.calculateStats(myDb, function(err) {
+    MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function (err, db) {
         if (err) {
             console.log(err);
             return;
         }
-        console.log('Players aggregates regenerated ... ');
-      });
-    });  
+        myDb = db;
+        var players = myDb.collection('players');
+        var games = myDb.collection('games');
+        Players.calculateStats(myDb, function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log('Players aggregates regenerated ... ');
+        });
+    });
 }
 
 connect();
@@ -87,25 +86,23 @@ exports.init = function(server) {
 			{safe: true},
 			function(err, addedGames) {
 				Players.calculateStats(myDb, function(err) {
-                if (err)
-                    console.log(err);
-
-                console.log('Players aggregates regenerated ... ');
-                Players.find(myDb, function(players, playersStats) {
-                    Ratings.calculate(myDb, players, function(playerRatings) {
-                        var data = {
-                            stats: {
-                                players: playersStats,
-                                ratings : playerRatings
-                            },
-                            game: addedGames[0]
-                        };
-                        res.send(data)
+                    if (err)
+                        console.log(err);
+                    console.log('Players aggregates regenerated ... ');
+                    Players.find(myDb, function(players, playersStats) {
+                        Ratings.calculate(myDb, players, function(playerRatings) {
+                            var data = {
+                                stats: {
+                                    players: playersStats,
+                                    ratings : playerRatings
+                                },
+                                game: addedGames[0]
+                            };
+                            res.send(data)
+                        });
                     });
+                    console.log('Players aggregates regenerated ... ');
                 });
-                console.log('Players aggregates regenerated ... ');
-
-    });
 			}
 		);	
 
@@ -132,7 +129,6 @@ var calculateStats = function(db, callback) {
             });
         });
         console.log('Players aggregates regenerated ... ');
-
     });
 }
 
