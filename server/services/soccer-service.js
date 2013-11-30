@@ -1,24 +1,25 @@
 var MongoClient = require('mongodb').MongoClient;
 var Players = require('./players');
 var Games = require('./games');
+var Ratings = require('./ratings');
 var myDb;
 
 var connect = function() {
 	MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function(err, db) {
 
-      if(err) { 
-      	console.log(err);
-      	return;	
+      if(err) {
+        console.log(err);
+        return;
       };
       myDb = db;
       var players = myDb.collection('players');
       var games = myDb.collection('games');
       Players.calculateStats(myDb, function(err) {
-      	if (err) {
-      		console.log(err);
-      		return;
-      	}
-      	console.log('Players aggregates regenerated ... ');
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log('Players aggregates regenerated ... ');
       });
     });  
 }
@@ -28,19 +29,21 @@ connect();
 exports.init = function(server) {
 
 	server.get('/api/init', function(req, res) {
-		Players.find(myDb, function(players, playersStats, playerRatings) {
-			Games.find(myDb, function(games) {
-				var data = {
-					players: players,
-					stats: {
-						players: playersStats,
-                        ratings : playerRatings
-					},
-					games: games
+		Players.find(myDb, function(players, playersStats) {
+            Ratings.calculate(myDb, players, function(playerRatings) {
+                Games.find(myDb, function(games) {
+                    var data = {
+                        players: players,
+                        stats: {
+                            players: playersStats,
+                            ratings : playerRatings
+                        },
+                        games: games
 
-				};
-				res.send(data);
-			});
+                    };
+                    res.send(data);
+                });
+            });
 		});
 
 	});
@@ -58,15 +61,17 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				Players.find(myDb, function(players, playersStats, playerRatings) {
-					var data = {
-						players: players,
-						stats: {
-							players: playersStats,
-                            ratings : playerRatings
-						}
-					};
-					res.send(data);
+				Players.find(myDb, function(players, playersStats) {
+                    Ratings.calculate(myDb, players, function(playerRatings) {
+                        var data = {
+                            players: players,
+                            stats: {
+                                players: playersStats,
+                                ratings : playerRatings
+                            }
+                        };
+                        res.send(data);
+                    });
 				});
 			}
 		);
@@ -82,25 +87,53 @@ exports.init = function(server) {
 			{safe: true},
 			function(err, addedGames) {
 				Players.calculateStats(myDb, function(err) {
-					if (err)
-						console.log(err);
+                if (err)
+                    console.log(err);
 
-					console.log('Players aggregates regenerated ... ');
-					Players.find(myDb, function(players, playersStats, playerRatings) {
-						var data = {
-							stats: {
-								players: playersStats,
+                console.log('Players aggregates regenerated ... ');
+                Players.find(myDb, function(players, playersStats) {
+                    Ratings.calculate(myDb, players, function(playerRatings) {
+                        var data = {
+                            stats: {
+                                players: playersStats,
                                 ratings : playerRatings
-							},
-							game: addedGames[0]
-						};
-						res.send(data)
-					});
-				});
+                            },
+                            game: addedGames[0]
+                        };
+                        res.send(data)
+                    });
+                });
+                console.log('Players aggregates regenerated ... ');
+
+    });
 			}
 		);	
 
 	});
+}
+
+
+var calculateStats = function(db, callback) {
+    Players.calculateStats(db, function(err) {
+        if (err)
+            console.log(err);
+
+        console.log('Players aggregates regenerated ... ');
+        Players.find(db, function(players, playersStats) {
+            Ratings.calculate(db, players,  function(playerRatings) {
+                var data = {
+                    stats: {
+                        players: playersStats,
+                        ratings : playerRatings
+                    },
+                    game: addedGames[0]
+                };
+                res.send(data)
+            });
+        });
+        console.log('Players aggregates regenerated ... ');
+
+    });
 }
 
 

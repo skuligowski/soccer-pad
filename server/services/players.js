@@ -1,8 +1,3 @@
-var jst = require('jstrueskill');
-var blueTeam= jst.Team("blueTeam");
-var whiteTeam= jst.Team("whiteTeam")
-
-
 var mapFunction = function() {
 	var whiteWin = this.score.white > this.score.blue;
 	for(var position in this.table) {
@@ -68,56 +63,9 @@ exports.find = function(db, callback) {
 					statsMap[players[i]._id] = reduceFunction(players[i]._id, []);
 			}
 
-            calculateRatings(db, players, statsMap, callback);
-
+            callback(  players, statsMap);
 
 		});
 	});
 }
 
-calculateRatings = function(db, players, statsMap, callback) {
-
-    db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
-        var idplayerMap = {};
-        var gameInfo = new jst.GameInfo.getDefaultGameInfo();
-        var playerMap = {},playerRatingMap = {};
-
-        for (var playerIndex in players) {
-            var player = new jst.Player([players[playerIndex]._id]);
-            playerMap[players[playerIndex]._id] = player;
-            playerRatingMap[player] = gameInfo.getDefaultRating();
-        }
-
-        for (var gameIndex in games) {
-            game = games[gameIndex];
-
-            var rankArray = game.score.blue > game.score.white ? [2,1] : [1,2];
-
-            var blueTeam= new jst.Team("blueTeam");
-            var whiteTeam=new jst.Team("whiteTeam");
-
-            for (var position in game.table) {
-                var currentPlayer = playerMap[game.table[position]];
-
-                (position == 'A' || position == 'B')
-                    ?  blueTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer])
-                    :  whiteTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer]) ;
-            }
-            var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
-                [blueTeam,whiteTeam], rankArray);
-            for (var resultKey in resultMap) {
-                 playerRatingMap[resultKey] = resultMap[resultKey];
-            }
-        }
-
-        for (var playerId in playerMap) {
-            var currentRating =  playerRatingMap[playerMap[playerId]];
-            idplayerMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
-        }
-        callback(players, statsMap, idplayerMap);
-
-    });
-
-
-
-}
