@@ -40,9 +40,9 @@ reduceFunction = function(user_id, stats) {
 	return o;
 };
 
-exports.calculateStats = function(db, callback) {
+exports.calculateStats = function(db, gamesCollection, callback) {
 	db.collection('players_stats').drop();
-	db.collection('games').mapReduce(
+	gamesCollection.mapReduce(
 		mapFunction,
 		reduceFunction,
 		{ out: "players_stats" },

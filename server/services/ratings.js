@@ -1,9 +1,9 @@
 var jst = require('jstrueskill');
 
-exports.calculate = function(db, callback) {
+exports.calculate = function(db, playersCollection, gamesCollection, callback) {
     db.collection('players_ratings').drop();
-    db.collection('games').find().sort({'name': 1}).toArray(function(err, games) {
-        db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
+    gamesCollection.find().toArray(function(err, games) {
+        playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
             var gameInfo = new jst.GameInfo.getDefaultGameInfo()
               , playerMap = {}
               , playerRatingMap = {};

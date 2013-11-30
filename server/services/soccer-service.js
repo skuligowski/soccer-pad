@@ -11,8 +11,7 @@ var connect = function() {
             return;
         }
         myDb = db;
-        var players = myDb.collection('players');
-        var games = myDb.collection('games');
+
         calculateStats(myDb);
     });
 }
@@ -68,11 +67,10 @@ exports.init = function(server) {
 		var game = req.body; 
 		game.date = new Date();
 		var collection = myDb.collection('games');
-		console.log(game);
-		collection.insert(game, 
-			{safe: true},
-			function(err, addedGames) {
-				calculateStats(myDb, function() {
+        collection.insert(game,
+            {safe: true},
+            function(err, addedGames) {
+                calculateStats(myDb, function() {
                     retrieveStats(myDb, function(players, playersStats, playerRatings) {
                         var data = {
                             stats: {
@@ -85,14 +83,16 @@ exports.init = function(server) {
                     });
                 });
 
-			}
+            }
 		);	
 	});
 }
 
-var calculateStats = function(db, callback ) {
-    Players.calculateStats(db, function(errP) {
-        Ratings.calculate(db, function(errR) {
+var calculateStats = function(db,   callback ) {
+    var playersCollection = myDb.collection('players')
+      , gamesCollection = myDb.collection('games');
+    Players.calculateStats(db, gamesCollection, function(errP) {
+        Ratings.calculate(db, playersCollection, gamesCollection, function(errR) {
             errP && console.log(errP);
             errR && console.log(errR);
             console.log('Players aggregates regenerated ... ');
