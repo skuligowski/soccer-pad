@@ -89,8 +89,8 @@ exports.init = function(server) {
 }
 
 var calculateStats = function(db,   callback ) {
-    var playersCollection = myDb.collection('players')
-      , gamesCollection = myDb.collection('games');
+    var playersCollection = myDb.collection('players'),
+        gamesCollection = myDb.collection('games');
     Players.calculateStats(db, gamesCollection, function(errP) {
         Ratings.calculate(db, playersCollection, gamesCollection, function(errR) {
             errP && console.log(errP);

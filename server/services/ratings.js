@@ -4,22 +4,22 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
     db.collection('players_ratings').drop();
     gamesCollection.find().toArray(function(err, games) {
         playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
-            var gameInfo = new jst.GameInfo.getDefaultGameInfo()
-              , playerMap = {}
-              , playerRatingMap = {};
+            var gameInfo = new jst.GameInfo.getDefaultGameInfo(),
+                playerMap = {},
+                playerRatingMap = {};
 
             for (var playerIndex in players) {
-                var playerId = players[playerIndex]._id
-                  , player = new jst.Player(playerId);
+                var playerId = players[playerIndex]._id,
+                    player = new jst.Player(playerId);
                 playerMap[playerId] = player;
                 playerRatingMap[player] = gameInfo.getDefaultRating();
             }
 
             for (var gameIndex in games) {
-                var game = games[gameIndex]
-                  , rankArray = game.score.blue > game.score.white ? [1,2] : [2,1]
-                  , blueTeam = new jst.Team("blueTeam")
-                  , whiteTeam = new jst.Team("whiteTeam");
+                var game = games[gameIndex],
+                    rankArray = game.score.blue > game.score.white ? [1,2] : [2,1],
+                    blueTeam = new jst.Team("blueTeam"),
+                    whiteTeam = new jst.Team("whiteTeam");
 
                 for (var position in game.table) {
                     var currentPlayer = playerMap[game.table[position]];
@@ -39,13 +39,15 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
                 }
             }
 
-            var idplayerMap = {};
+            var idToRatingMap = {};
             for (var playerId in playerMap) {
-                var currentRating =  playerRatingMap[playerMap[playerId]];
-                idplayerMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
+                if (playerMap.hasOwnProperty(playerId)) {
+                    var currentRating =  playerRatingMap[playerMap[playerId]];
+                    idToRatingMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
+                }
             }
 
-            db.collection('players_ratings').insert(idplayerMap, callback);
+            db.collection('players_ratings').insert(idToRatingMap, callback);
 
         });
     });
