@@ -21,13 +21,13 @@ connect();
 exports.init = function(server) {
 
 	server.get('/api/init', function(req, res) {
-		retrieveStats(myDb, function(players, playersStats, playerRatings)  {
+		retrieveStats(myDb, function(players, playersStats, playersRatings)  {
             Games.find(myDb, function(games) {
                 var data = {
                     players: players,
                     stats: {
                         players: playersStats,
-                        ratings : playerRatings
+                        ratings : playersRatings
                     },
                     games: games
                 };
@@ -49,12 +49,12 @@ exports.init = function(server) {
 			} }, 
 			{upsert: true, safe: true},
 			function() {
-				retrieveStats(myDb, function(players, playersStats, playerRatings) {
+				retrieveStats(myDb, function(players, playersStats, playersRatings) {
                     var data = {
                         players: players,
                         stats: {
                             players: playersStats,
-                            ratings : playerRatings
+                            ratings : playersRatings
                         }
                     };
                     res.send(data);
@@ -71,11 +71,11 @@ exports.init = function(server) {
             {safe: true},
             function(err, addedGames) {
                 calculateStats(myDb, function() {
-                    retrieveStats(myDb, function(players, playersStats, playerRatings) {
+                    retrieveStats(myDb, function(players, playersStats, playersRatings) {
                         var data = {
                             stats: {
                                 players: playersStats,
-                                ratings : playerRatings
+                                ratings : playersRatings
                             },
                             game: addedGames[0]
                         };
@@ -104,8 +104,8 @@ var calculateStats = function(db, callback ) {
 var retrieveStats = function(db, callback ) {
     var playersCollection = db.collection('players');
     Players.find(db, playersCollection, function(players, playersStats) {
-        Ratings.find(db, playersCollection, function(playerRatings) {
-            callback && callback(players, playersStats, playerRatings);
+        Ratings.find(db, playersCollection, function(playersRatings) {
+            callback && callback(players, playersStats, playersRatings);
         });
     });
 }
