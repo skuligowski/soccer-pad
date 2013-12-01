@@ -43,7 +43,7 @@
 			<td>{{stats.players[player._id].win}}</td>
 			<td>{{stats.players[player._id].loss}}</td>
 			<td>{{(stats.players[player._id].win / (stats.players[player._id].games + 0.0001) * 100).toFixed(0)}}%</td>
-			<td>{{stats.ratings[player._id].mean.toFixed(2)}} +- {{stats.ratings[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings[player._id].mean.toFixed(2)}} ± {{stats.ratings[player._id].sd.toFixed(2)}}</td>
 			<td>{{stats.players[player._id].winA + stats.players[player._id].winD}}</td>
 			<td>{{stats.players[player._id].lossA + stats.players[player._id].lossD}}</td>
 			<td>{{stats.players[player._id].winB + stats.players[player._id].winC}}</td>
