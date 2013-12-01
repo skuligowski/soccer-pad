@@ -88,7 +88,7 @@ exports.init = function(server) {
 	});
 }
 
-var calculateStats = function(db,   callback ) {
+var calculateStats = function(db, callback ) {
     var playersCollection = myDb.collection('players'),
         gamesCollection = myDb.collection('games');
     Players.calculateStats(db, gamesCollection, function(errP) {
@@ -102,8 +102,9 @@ var calculateStats = function(db,   callback ) {
 }
 
 var retrieveStats = function(db, callback ) {
-    Players.find(db, function(players, playersStats) {
-        Ratings.find(db, function(playerRatings) {
+    var playersCollection = db.collection('players');
+    Players.find(db, playersCollection, function(players, playersStats) {
+        Ratings.find(db, playersCollection, function(playerRatings) {
             callback && callback(players, playersStats, playerRatings);
         });
     });

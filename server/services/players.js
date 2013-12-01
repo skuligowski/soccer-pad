@@ -50,8 +50,8 @@ exports.calculateStats = function(db, gamesCollection, callback) {
 }
 
 
-exports.find = function(db, callback) {
-	db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
+exports.find = function(db, playersCollection, callback) {
+	playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 		db.collection('players_stats').find().toArray(function(err, stats) {
 			var statsMap = {};
 			for(var i = 0; i < stats.length; i++) 

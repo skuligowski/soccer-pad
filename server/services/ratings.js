@@ -1,18 +1,20 @@
 var jst = require('jstrueskill');
 
+var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
+    defaultRating = defaultGameInfo.getDefaultRating();
+
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
     db.collection('players_ratings').drop();
     gamesCollection.find().toArray(function(err, games) {
         playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
-            var gameInfo = new jst.GameInfo.getDefaultGameInfo(),
-                playerMap = {},
+            var playerMap = {},
                 playerRatingMap = {};
 
             for (var playerIndex in players) {
                 var playerId = players[playerIndex]._id,
                     player = new jst.Player(playerId);
                 playerMap[playerId] = player;
-                playerRatingMap[player] = gameInfo.getDefaultRating();
+                playerRatingMap[player] = defaultRating;
             }
 
             for (var gameIndex in games) {
@@ -29,7 +31,7 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
                         :  blueTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer]) ;
                 }
 
-                var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(gameInfo,
+                var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(defaultGameInfo,
                     [blueTeam,whiteTeam], rankArray);
 
                 for (var resultKey in resultMap) {
@@ -53,9 +55,18 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
     });
 }
 
-exports.find = function(db,  callback) {
-    db.collection('players_ratings').find().toArray(function(err, ratings) {
-         callback(ratings[0]);
+exports.find = function(db, playersCollection,  callback) {
+    playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
+        db.collection('players_ratings').find().toArray(function(err, ratingsArray) {
+            var idToRatingsMap = ratingsArray[0];
+            for (var playerIndex in players) {
+                var playerId = players[playerIndex]._id;
+                if (!(playerId  in idToRatingsMap )) {
+                    idToRatingsMap[playerId] = { mean : defaultRating.getMean(), sd : defaultRating.getStandardDeviation()};
+                }
+            }
+            callback && callback(idToRatingsMap);
+        });
     });
 }
 
