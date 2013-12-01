@@ -58,10 +58,6 @@ html {
 	margin-top: 14px;
 }
 
-
-
-
-
 .view-animate {
 }
  
@@ -83,4 +79,9 @@ html {
 }
 .view-animate.ng-leave.ng-leave-active {
   opacity: 0;
+}
+
+.sortable {
+    text-decoration: underline;
+    cursor:pointer;
 }

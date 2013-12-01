@@ -20,12 +20,12 @@
     			<th colspan="2" class="white">WHITE</th>
 				<th colspan="2" class="blue">BLUE</th>
 			</tr>
-			<tr>
-				<th ng-click="changeSorting('name')">Name</th>
+			<tr class="sortable">
+
 				<th ng-click="changeSorting('games')">Games</th>
 				<th ng-click="changeSorting('win')">Win</th>
 				<th ng-click="changeSorting('loss')">Loss</th>
-				<th ng-click="changeSorting('rating')">Rating</th>
+				<th ng-click="changeSorting('mean')">Rating</th>
 				<th ng-click="changeSorting('winPerc')"style="width:140px">% of wins</th>
 				<th ng-click="changeSorting('winD')">Win</th>
 				<th ng-click="changeSorting('lossD')">Loss</th>
@@ -42,7 +42,7 @@
 			<td>{{tableRow.games}}</td>
 			<td>{{tableRow.win}}</td>
 			<td>{{tableRow.loss}}</td>
-			<td>{{tableRow.rating}}</td>
+			<td>{{tableRow.mean.toFixed(2)}} ± {{tableRow.sd.toFixed(2)}}</td>
 			<td>{{tableRow.winPerc.toFixed(0)}}%</td>
 			<td>{{tableRow.winD}}</td>
 			<td>{{tableRow.lossD}}</td>
