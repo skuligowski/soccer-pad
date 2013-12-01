@@ -14,21 +14,23 @@
 		<thead>
 			<tr>
 				<th rowspan="2">Name</th>
-				<th colspan="4">OVERALL</th>
+				<th colspan="5">OVERALL</th>
 				<th colspan="2">DEFENDER</th>
 				<th colspan="2">ATTACKER</th>
-				<th colspan="2" class="white">WHITE</th>
+    			<th colspan="2" class="white">WHITE</th>
 				<th colspan="2" class="blue">BLUE</th>
 			</tr>
 			<tr>
 				<th>Games</th>
 				<th>Win</th>
+                <th>Loss</th>
+				<th>% of wins</th>
+				<th style="width:160px">Rating</th>
+                <th>Win</th>
 				<th>Loss</th>
-				<th style="width:140px">% of wins</th>
 				<th>Win</th>
-				<th>Loss</th>
-				<th>Win</th>
-				<th style="width:140px">Loss</th>
+				<th style="width:100px">Loss</th>
+
 				<th>Win</th>
 				<th>Loss</th>
 				<th>Win</th>
@@ -41,11 +43,12 @@
 			<td>{{stats.players[player._id].win}}</td>
 			<td>{{stats.players[player._id].loss}}</td>
 			<td>{{(stats.players[player._id].win / (stats.players[player._id].games + 0.0001) * 100).toFixed(0)}}%</td>
+			<td>{{stats.ratings[player._id].mean.toFixed(2)}} ± {{stats.ratings[player._id].sd.toFixed(2)}}</td>
 			<td>{{stats.players[player._id].winA + stats.players[player._id].winD}}</td>
 			<td>{{stats.players[player._id].lossA + stats.players[player._id].lossD}}</td>
 			<td>{{stats.players[player._id].winB + stats.players[player._id].winC}}</td>
 			<td>{{stats.players[player._id].lossB + stats.players[player._id].lossC}}</td>
-			<td class="white">{{stats.players[player._id].winA + stats.players[player._id].winB}}</td>
+            <td class="white">{{stats.players[player._id].winA + stats.players[player._id].winB}}</td>
 			<td class="white">{{stats.players[player._id].lossA + stats.players[player._id].lossB}}</td>
 			<td class="blue">{{stats.players[player._id].winC + stats.players[player._id].winD}}</td>
 			<td class="blue">{{stats.players[player._id].lossC + stats.players[player._id].lossD}}</td>

@@ -1,6 +1,5 @@
 var mapFunction = function() {
 	var whiteWin = this.score.white > this.score.blue;
-
 	for(var position in this.table) {
 		var whitePosition = position == 'A' | position == 'B',
 			o = {
@@ -41,17 +40,18 @@ reduceFunction = function(user_id, stats) {
 	return o;
 };
 
-exports.calculateStats = function(db, callback) {
+exports.calculateStats = function(db, gamesCollection, callback) {
 	db.collection('players_stats').drop();
-	db.collection('games').mapReduce(
+	gamesCollection.mapReduce(
 		mapFunction,
 		reduceFunction,
 		{ out: "players_stats" },
 		callback);
 }
 
-exports.find = function(db, callback) {
-	db.collection('players').find().sort({'name': 1}).toArray(function(err, players) {
+
+exports.find = function(db, playersCollection, callback) {
+	playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 		db.collection('players_stats').find().toArray(function(err, stats) {
 			var statsMap = {};
 			for(var i = 0; i < stats.length; i++) 
@@ -62,8 +62,9 @@ exports.find = function(db, callback) {
 				if (!stats)
 					statsMap[players[i]._id] = reduceFunction(players[i]._id, []);
 			}
+            callback(  players, statsMap);
 
-			callback(players, statsMap);
 		});
 	});
 }
+
