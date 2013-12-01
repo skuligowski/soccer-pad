@@ -25,7 +25,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
             var player = $scope.model.players[playerIndex],
                 playerId = player._id,
                 playerStats = $scope.stats.players[playerId],
-                playerRatings = $scope.stats.ratings[playerId]
+                playerRatings = $scope.stats.ratings[playerId];
 
             var tableRow = {
                 name : player.name,
