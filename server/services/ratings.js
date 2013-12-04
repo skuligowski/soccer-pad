@@ -3,17 +3,41 @@ var jst = require('jstrueskill');
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 	defaultRating = defaultGameInfo.getDefaultRating(),
 
-	calculate = function(playersCollection, gamesCollection, callback) {
+	simpleStrategy = function(playerId) {
+		var player = new jst.Player(playerId);
+		
+		return {
+			attacker: player,
+			defender: player
+		};
+	},
+
+	attackerDefenderStrategy = function(playerId) {
+		var attackerId = 'attacker:' + playerId,
+			defenderId = 'defender:' + playerId, 
+			attacker = new jst.Player(attackerId),
+			defender = new jst.Player(defenderId);
+		
+		return {
+			attacker: attacker,
+			defender: defender
+		};
+	},
+
+	calculate = function(playersCollection, gamesCollection, strategy, callback) {
 		gamesCollection.find().toArray(function(err, games) {
 			playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
-				var playerMap = {},
+				var attackerMap = {},
+					defenderMap = {},
 					playerRatingMap = {};
 
 				for (var playerIndex in players) {
 					var playerId = players[playerIndex]._id,
-						player = new jst.Player(playerId);
-					playerMap[playerId] = player;
-					playerRatingMap[player] = defaultRating;
+						player = strategy(playerId);
+					attackerMap[playerId] = player.attacker;
+					defenderMap[playerId] = player.defender;
+					playerRatingMap[player.attacker] = defaultRating;
+					playerRatingMap[player.defender] = defaultRating;
 				}
 
 				for (var gameIndex in games) {
@@ -23,14 +47,16 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 						whiteTeam = new jst.Team("whiteTeam");
 
 					for (var position in game.table) {
-						var currentPlayer = playerMap[game.table[position]];
+						var currentPlayer = (position == 'A' || position == 'D') 
+							? defenderMap[game.table[position]]
+							: attackerMap[game.table[position]];
 
 						(position == 'A' || position == 'B')
-							?  whiteTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer])
-							:  blueTeam.addPlayer(currentPlayer,playerRatingMap[currentPlayer]);
+							? whiteTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer])
+							: blueTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer]);
 					}
 
-					var resultMap  = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(defaultGameInfo,
+					var resultMap = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(defaultGameInfo,
 						[blueTeam,whiteTeam], rankArray);
 
 					for (var resultKey in resultMap) {
@@ -40,15 +66,18 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 					}
 				}
 
-				var idToRatingMap = {};
-				for (var playerId in playerMap) {
-					if (playerMap.hasOwnProperty(playerId)) {
-						var currentRating =  playerRatingMap[playerMap[playerId]];
-						idToRatingMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
+				function prepareRatingMap(playerMap) {
+					var idToRatingMap = {};
+					for (var playerId in playerMap) {
+						if (playerMap.hasOwnProperty(playerId)) {
+							var currentRating =  playerRatingMap[playerMap[playerId]];
+							idToRatingMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
+						}
 					}
+					return idToRatingMap;
 				}
 
-				callback && callback(idToRatingMap);
+				callback && callback(prepareRatingMap(attackerMap), prepareRatingMap(defenderMap));
 
 			});
 		});
@@ -56,9 +85,8 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
-	calculate(playersCollection, gamesCollection, function(idToRatingMap) {
-		console.log(idToRatingMap);
-		db.collection('players_ratings').insert(idToRatingMap, callback);
+	calculate(playersCollection, gamesCollection, simpleStrategy, function(attackerRatingMap, defenderRatingMap) {
+		db.collection('players_ratings').insert(attackerRatingMap, callback);
 	});
 }
 
