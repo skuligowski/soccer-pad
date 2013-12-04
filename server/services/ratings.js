@@ -36,8 +36,7 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 						player = strategy(playerId);
 					attackerMap[playerId] = player.attacker;
 					defenderMap[playerId] = player.defender;
-					playerRatingMap[player.attacker] = defaultRating;
-					playerRatingMap[player.defender] = defaultRating;
+					playerRatingMap[player.attacker] = playerRatingMap[player.defender] = defaultRating;
 				}
 
 				for (var gameIndex in games) {
