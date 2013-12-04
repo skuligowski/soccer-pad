@@ -24,7 +24,7 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 		};
 	},
 
-	calculate = function(playersCollection, gamesCollection, strategy, callback) {
+	calculate = function(playersCollection, gamesCollection, strategy, threshold, callback) {
 		gamesCollection.find().toArray(function(err, games) {
 			playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 				var attackerMap = {},
@@ -42,9 +42,10 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 
 				for (var gameIndex in games) {
 					var game = games[gameIndex],
-						rankArray = game.score.blue > game.score.white ? [1,2] : [2,1],
 						blueTeam = new jst.Team("blueTeam"),
-						whiteTeam = new jst.Team("whiteTeam");
+						whiteTeam = new jst.Team("whiteTeam"),
+						scoreDiff = game.score.blue - game.score.white,
+						rankArray = scoreDiff > threshold ? [1, 2] : scoreDiff < -threshold ? [2, 1] : [1, 1];
 
 					for (var position in game.table) {
 						var currentPlayer = (position == 'A' || position == 'D') 
@@ -85,12 +86,12 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
-	calculate(playersCollection, gamesCollection, simpleStrategy, function(attackerRatingMap, defenderRatingMap) {
+	calculate(playersCollection, gamesCollection, simpleStrategy, 0, function(attackerRatingMap, defenderRatingMap) {
 		db.collection('players_ratings').insert(attackerRatingMap, callback);
 	});
 }
 
-exports.find = function(db, playersCollection,  callback) {
+exports.find = function(db, playersCollection, callback) {
 	playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 		db.collection('players_ratings').find().toArray(function(err, ratingsArray) {
 			var idToRatingMap = ratingsArray[0];
