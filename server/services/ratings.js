@@ -99,16 +99,23 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 exports.find = function(db, playersCollection, callback) {
 	playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 		db.collection('players_ratings').find().toArray(function(err, ratingsArray) {
-			var ratings = ratingsArray[0],
-				idToRatingMap = ratings['T0'].overall;
-			for (var playerIndex in players) {
-				var playerId = players[playerIndex]._id;
-				if (!(playerId in idToRatingMap)) {
-					idToRatingMap[playerId] = { mean : defaultRating.getMean(), sd : defaultRating.getStandardDeviation()};
-				}
-			}
-			callback && callback(idToRatingMap);
+			var ratings = ratingsArray[0];
+
+			addMissingPlayers(ratings['T0'].overall, players);
+			addMissingPlayers(ratings['T0'].attackers, players);
+			addMissingPlayers(ratings['T0'].defenders, players);
+
+			callback && callback(ratings);
 		});
 	});
+
+	function addMissingPlayers(idToRatingMap, players) {
+		for (var playerIndex in players) {
+			var playerId = players[playerIndex]._id;
+			if (!(playerId in idToRatingMap)) {
+				idToRatingMap[playerId] = { mean : defaultRating.getMean(), sd : defaultRating.getStandardDeviation()};
+			}
+		}
+	}
 };
 

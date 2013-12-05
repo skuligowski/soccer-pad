@@ -13,9 +13,9 @@
 		</thead>
 		<tr ng-repeat="player in model.players">
 			<td>{{player.name}}</td>
-			<td>{{stats.ratings[player._id].mean.toFixed(2)}} ± {{stats.ratings[player._id].sd.toFixed(2)}}</td>
-			<td>-</td>
-			<td>-</td>
+			<td>{{stats.ratings['T0'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].overall[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T0'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].attackers[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T0'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].defenders[player._id].sd.toFixed(2)}}</td>
 		</tr>
 	</table>
 </div>
