@@ -103,7 +103,23 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 			return _.extend(ratings, {'0:A': ratingMaps.attackers, '0:D': ratingMaps.defenders});
 		});
 	}).then(function(ratings) {
-		db.collection('players_ratings').insert(ratings['0:O'], callback);
+		return calculate(playersCollection, gamesCollection, simpleStrategy, 2).then(function(ratingMaps) {
+			return _.extend(ratings, {'2:O': ratingMaps.attackers});
+		});
+	}).then(function(ratings) {
+		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 2).then(function(ratingMaps) {
+			return _.extend(ratings, {'2:A': ratingMaps.attackers, '2:D': ratingMaps.defenders});
+		});
+	}).then(function(ratings) {
+		return calculate(playersCollection, gamesCollection, simpleStrategy, 4).then(function(ratingMaps) {
+			return _.extend(ratings, {'4:O': ratingMaps.attackers});
+		});
+	}).then(function(ratings) {
+		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 4).then(function(ratingMaps) {
+			return _.extend(ratings, {'4:A': ratingMaps.attackers, '4:D': ratingMaps.defenders});
+		});
+	}).then(function(ratings) {
+		db.collection('players_ratings').insert(ratings['4:O'], callback);
 	}).done();
 };
 
