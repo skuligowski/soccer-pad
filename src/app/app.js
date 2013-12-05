@@ -2,7 +2,8 @@ angular.module('myApp', [
 	'ngAnimate',
 	'views.table',
 	'views.players',
-	'views.games'
+	'views.games',
+	'views.ratings'
 ]).
 
 controller('AppCtrl', ['$scope', function($scope) {
