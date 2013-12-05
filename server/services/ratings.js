@@ -1,4 +1,5 @@
-var jst = require('jstrueskill');
+var jst = require('jstrueskill'),
+	q = require('q');
 
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 	defaultRating = defaultGameInfo.getDefaultRating(),
@@ -25,8 +26,12 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 	},
 
 	calculate = function(playersCollection, gamesCollection, strategy, threshold, callback) {
-		gamesCollection.find().toArray(function(err, games) {
-			playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
+		var findGames = q.denodeify(gamesCollection.find().toArray),
+			findPlayers = q.denodeify(playersCollection.find().sort({'name': 1}).toArray);
+
+		findGames().then(function(games){
+			return findPlayers().then(function(players){
+
 				var attackerMap = {},
 					defenderMap = {},
 					playerRatingMap = {};
@@ -77,16 +82,20 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 					return idToRatingMap;
 				}
 
-				callback && callback(prepareRatingMap(attackerMap), prepareRatingMap(defenderMap));
-
+				return {
+					attackers: prepareRatingMap(attackerMap), 
+					defenders: prepareRatingMap(defenderMap)
+				};
 			});
-		});
+		}).then(function(ratingMaps){
+			callback && callback(ratingMaps);
+		}).done();
 	};
 
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
-	calculate(playersCollection, gamesCollection, simpleStrategy, 0, function(attackerRatingMap, defenderRatingMap) {
-		db.collection('players_ratings').insert(attackerRatingMap, callback);
+	calculate(playersCollection, gamesCollection, simpleStrategy, 0, function(ratingMaps) {
+		db.collection('players_ratings').insert(ratingMaps.attackers, callback);
 	});
 }
 
