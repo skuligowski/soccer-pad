@@ -1,0 +1,21 @@
+<div ng-controller="RatingsCtrl">
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th rowspan="2">Name</th>
+				<th colspan="3">Threshold 0pt</th>
+			</tr>
+			<tr>
+				<th>Overall</th>
+				<th>Attacker</th>
+				<th>Defender</th>
+			</tr>
+		</thead>
+		<tr ng-repeat="player in model.players">
+			<td>{{player.name}}</td>
+			<td>{{stats.ratings[player._id].mean.toFixed(2)}} ± {{stats.ratings[player._id].sd.toFixed(2)}}</td>
+			<td>-</td>
+			<td>-</td>
+		</tr>
+	</table>
+</div>
