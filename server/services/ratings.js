@@ -1,5 +1,6 @@
 var jst = require('jstrueskill'),
-	q = require('q');
+	q = require('q'),
+	_ = require('lodash');
 
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 	defaultRating = defaultGameInfo.getDefaultRating(),
@@ -25,12 +26,12 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 		};
 	},
 
-	calculate = function(playersCollection, gamesCollection, strategy, threshold, callback) {
+	calculate = function(playersCollection, gamesCollection, strategy, threshold) {
 		var findGames = q.denodeify(gamesCollection.find().toArray),
 			findPlayers = q.denodeify(playersCollection.find().sort({'name': 1}).toArray);
 
-		findGames().then(function(games){
-			return findPlayers().then(function(players){
+		return findGames().then(function(games) {
+			return findPlayers().then(function(players) {
 
 				var attackerMap = {},
 					defenderMap = {},
@@ -87,17 +88,24 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 					defenders: prepareRatingMap(defenderMap)
 				};
 			});
-		}).then(function(ratingMaps){
-			callback && callback(ratingMaps);
-		}).done();
+		});
 	};
 
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
-	calculate(playersCollection, gamesCollection, simpleStrategy, 0, function(ratingMaps) {
-		db.collection('players_ratings').insert(ratingMaps.attackers, callback);
-	});
-}
+
+	q.when({}, function(ratings) {
+		return calculate(playersCollection, gamesCollection, simpleStrategy, 0).then(function(ratingMaps) {
+			return _.extend(ratings, {'0:O': ratingMaps.attackers});
+		});
+	}).then(function(ratings) {
+		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 0).then(function(ratingMaps) {
+			return _.extend(ratings, {'0:A': ratingMaps.attackers, '0:D': ratingMaps.defenders});
+		});
+	}).then(function(ratings) {
+		db.collection('players_ratings').insert(ratings['0:O'], callback);
+	}).done();
+};
 
 exports.find = function(db, playersCollection, callback) {
 	playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
@@ -112,5 +120,5 @@ exports.find = function(db, playersCollection, callback) {
 			callback && callback(idToRatingMap);
 		});
 	});
-}
+};
 
