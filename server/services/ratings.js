@@ -1,5 +1,4 @@
 var jst = require('jstrueskill'),
-	q = require('q'),
 	_ = require('lodash');
 
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
@@ -86,19 +85,15 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
 
-	var findGames = q.denodeify(gamesCollection.find().toArray),
-		findPlayers = q.denodeify(playersCollection.find().sort({'name': 1}).toArray);
-
-	findGames().then(function(games) {
-		return findPlayers().then(function(players) {
+	gamesCollection.find().toArray(function(err, games) {
+		playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 			var ratings = {};
 			ratings['T0'] = {overall: calculate(players, games, simpleStrategy, 0).attackers};
 			_.extend(ratings['T0'], calculate(players, games, attackerDefenderStrategy, 0));
-			return ratings;
+
+			db.collection('players_ratings').insert(ratings['T0'].overall, callback);
 		});
-	}).then(function(ratings) {
-		db.collection('players_ratings').insert(ratings['T0'].overall, callback);
-	}).done();
+	});
 };
 
 exports.find = function(db, playersCollection, callback) {
