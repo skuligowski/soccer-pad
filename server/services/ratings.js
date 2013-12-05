@@ -26,100 +26,78 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
 		};
 	},
 
-	calculate = function(playersCollection, gamesCollection, strategy, threshold) {
-		var findGames = q.denodeify(gamesCollection.find().toArray),
-			findPlayers = q.denodeify(playersCollection.find().sort({'name': 1}).toArray);
+	calculate = function(players, games, strategy, threshold) {
+		var attackerMap = {},
+			defenderMap = {},
+			playerRatingMap = {};
 
-		return findGames().then(function(games) {
-			return findPlayers().then(function(players) {
+		for (var playerIndex in players) {
+			var playerId = players[playerIndex]._id,
+				player = strategy(playerId);
+			attackerMap[playerId] = player.attacker;
+			defenderMap[playerId] = player.defender;
+			playerRatingMap[player.attacker] = playerRatingMap[player.defender] = defaultRating;
+		}
 
-				var attackerMap = {},
-					defenderMap = {},
-					playerRatingMap = {};
+		for (var gameIndex in games) {
+			var game = games[gameIndex],
+				blueTeam = new jst.Team("blueTeam"),
+				whiteTeam = new jst.Team("whiteTeam"),
+				scoreDiff = game.score.blue - game.score.white,
+				rankArray = scoreDiff > threshold ? [1, 2] : scoreDiff < -threshold ? [2, 1] : [1, 1];
 
-				for (var playerIndex in players) {
-					var playerId = players[playerIndex]._id,
-						player = strategy(playerId);
-					attackerMap[playerId] = player.attacker;
-					defenderMap[playerId] = player.defender;
-					playerRatingMap[player.attacker] = playerRatingMap[player.defender] = defaultRating;
+			for (var position in game.table) {
+				var currentPlayer = (position == 'A' || position == 'D') 
+					? defenderMap[game.table[position]]
+					: attackerMap[game.table[position]];
+
+				(position == 'A' || position == 'B')
+					? whiteTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer])
+					: blueTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer]);
+			}
+
+			var resultMap = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(defaultGameInfo,
+				[blueTeam,whiteTeam], rankArray);
+
+			for (var resultKey in resultMap) {
+				if (resultMap.hasOwnProperty(resultKey)) {
+					playerRatingMap[resultKey] = resultMap[resultKey];
 				}
+			}
+		}
 
-				for (var gameIndex in games) {
-					var game = games[gameIndex],
-						blueTeam = new jst.Team("blueTeam"),
-						whiteTeam = new jst.Team("whiteTeam"),
-						scoreDiff = game.score.blue - game.score.white,
-						rankArray = scoreDiff > threshold ? [1, 2] : scoreDiff < -threshold ? [2, 1] : [1, 1];
-
-					for (var position in game.table) {
-						var currentPlayer = (position == 'A' || position == 'D') 
-							? defenderMap[game.table[position]]
-							: attackerMap[game.table[position]];
-
-						(position == 'A' || position == 'B')
-							? whiteTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer])
-							: blueTeam.addPlayer(currentPlayer, playerRatingMap[currentPlayer]);
-					}
-
-					var resultMap = new jst.FactorGraphTrueSkillCalculator().calculateNewRatings(defaultGameInfo,
-						[blueTeam,whiteTeam], rankArray);
-
-					for (var resultKey in resultMap) {
-						if (resultMap.hasOwnProperty(resultKey)) {
-							playerRatingMap[resultKey] = resultMap[resultKey];
-						}
-					}
+		function prepareRatingMap(playerMap) {
+			var idToRatingMap = {};
+			for (var playerId in playerMap) {
+				if (playerMap.hasOwnProperty(playerId)) {
+					var currentRating =  playerRatingMap[playerMap[playerId]];
+					idToRatingMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
 				}
+			}
+			return idToRatingMap;
+		}
 
-				function prepareRatingMap(playerMap) {
-					var idToRatingMap = {};
-					for (var playerId in playerMap) {
-						if (playerMap.hasOwnProperty(playerId)) {
-							var currentRating =  playerRatingMap[playerMap[playerId]];
-							idToRatingMap[playerId] = { mean : currentRating.getMean(), sd : currentRating.getStandardDeviation()};
-						}
-					}
-					return idToRatingMap;
-				}
-
-				return {
-					attackers: prepareRatingMap(attackerMap), 
-					defenders: prepareRatingMap(defenderMap)
-				};
-			});
-		});
+		return {
+			attackers: prepareRatingMap(attackerMap), 
+			defenders: prepareRatingMap(defenderMap)
+		};
 	};
 
 exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	db.collection('players_ratings').drop();
 
-	q.when({}, function(ratings) {
-		return calculate(playersCollection, gamesCollection, simpleStrategy, 0).then(function(ratingMaps) {
-			return _.extend(ratings, {'0:O': ratingMaps.attackers});
+	var findGames = q.denodeify(gamesCollection.find().toArray),
+		findPlayers = q.denodeify(playersCollection.find().sort({'name': 1}).toArray);
+
+	findGames().then(function(games) {
+		return findPlayers().then(function(players) {
+			var ratings = {};
+			ratings['T0'] = {overall: calculate(players, games, simpleStrategy, 0).attackers};
+			_.extend(ratings['T0'], calculate(players, games, attackerDefenderStrategy, 0));
+			return ratings;
 		});
 	}).then(function(ratings) {
-		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 0).then(function(ratingMaps) {
-			return _.extend(ratings, {'0:A': ratingMaps.attackers, '0:D': ratingMaps.defenders});
-		});
-	}).then(function(ratings) {
-		return calculate(playersCollection, gamesCollection, simpleStrategy, 2).then(function(ratingMaps) {
-			return _.extend(ratings, {'2:O': ratingMaps.attackers});
-		});
-	}).then(function(ratings) {
-		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 2).then(function(ratingMaps) {
-			return _.extend(ratings, {'2:A': ratingMaps.attackers, '2:D': ratingMaps.defenders});
-		});
-	}).then(function(ratings) {
-		return calculate(playersCollection, gamesCollection, simpleStrategy, 4).then(function(ratingMaps) {
-			return _.extend(ratings, {'4:O': ratingMaps.attackers});
-		});
-	}).then(function(ratings) {
-		return calculate(playersCollection, gamesCollection, attackerDefenderStrategy, 4).then(function(ratingMaps) {
-			return _.extend(ratings, {'4:A': ratingMaps.attackers, '4:D': ratingMaps.defenders});
-		});
-	}).then(function(ratings) {
-		db.collection('players_ratings').insert(ratings['4:O'], callback);
+		db.collection('players_ratings').insert(ratings['T0'].overall, callback);
 	}).done();
 };
 
