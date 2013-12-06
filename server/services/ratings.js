@@ -88,12 +88,12 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 	gamesCollection.find().toArray(function(err, games) {
 		playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
 			var ratings = {};
-			ratings['T0'] = {overall: calculate(players, games, simpleStrategy, 0).attackers};
-			_.extend(ratings['T0'], calculate(players, games, attackerDefenderStrategy, 0));
-			ratings['T2'] = {overall: calculate(players, games, simpleStrategy, 2).attackers};
-			_.extend(ratings['T2'], calculate(players, games, attackerDefenderStrategy, 2));
-			ratings['T4'] = {overall: calculate(players, games, simpleStrategy, 4).attackers};
-			_.extend(ratings['T4'], calculate(players, games, attackerDefenderStrategy, 4));
+			ratings['T0'] = _.extend({overall: calculate(players, games, simpleStrategy, 0).attackers}, 
+				calculate(players, games, attackerDefenderStrategy, 0));
+			ratings['T2'] = _.extend({overall: calculate(players, games, simpleStrategy, 2).attackers},
+				calculate(players, games, attackerDefenderStrategy, 2));
+			ratings['T4'] = _.extend({overall: calculate(players, games, simpleStrategy, 4).attackers},
+			  calculate(players, games, attackerDefenderStrategy, 4));
 
 			db.collection('players_ratings').insert(ratings, callback);
 		});
