@@ -90,6 +90,10 @@ exports.calculate = function(db, playersCollection, gamesCollection, callback) {
 			var ratings = {};
 			ratings['T0'] = {overall: calculate(players, games, simpleStrategy, 0).attackers};
 			_.extend(ratings['T0'], calculate(players, games, attackerDefenderStrategy, 0));
+			ratings['T2'] = {overall: calculate(players, games, simpleStrategy, 2).attackers};
+			_.extend(ratings['T2'], calculate(players, games, attackerDefenderStrategy, 2));
+			ratings['T4'] = {overall: calculate(players, games, simpleStrategy, 4).attackers};
+			_.extend(ratings['T4'], calculate(players, games, attackerDefenderStrategy, 4));
 
 			db.collection('players_ratings').insert(ratings, callback);
 		});
@@ -104,6 +108,12 @@ exports.find = function(db, playersCollection, callback) {
 			addMissingPlayers(ratings['T0'].overall, players);
 			addMissingPlayers(ratings['T0'].attackers, players);
 			addMissingPlayers(ratings['T0'].defenders, players);
+			addMissingPlayers(ratings['T2'].overall, players);
+			addMissingPlayers(ratings['T2'].attackers, players);
+			addMissingPlayers(ratings['T2'].defenders, players);
+			addMissingPlayers(ratings['T4'].overall, players);
+			addMissingPlayers(ratings['T4'].attackers, players);
+			addMissingPlayers(ratings['T4'].defenders, players);
 
 			callback && callback(ratings);
 		});

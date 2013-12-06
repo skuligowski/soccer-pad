@@ -4,8 +4,16 @@
 			<tr>
 				<th rowspan="2">Name</th>
 				<th colspan="3">Threshold 0pt</th>
+				<th colspan="3">Threshold 2pt</th>
+				<th colspan="3">Threshold 4pt</th>
 			</tr>
 			<tr>
+				<th>Overall</th>
+				<th>Attacker</th>
+				<th>Defender</th>
+				<th>Overall</th>
+				<th>Attacker</th>
+				<th>Defender</th>
 				<th>Overall</th>
 				<th>Attacker</th>
 				<th>Defender</th>
@@ -16,6 +24,12 @@
 			<td>{{stats.ratings['T0'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].overall[player._id].sd.toFixed(2)}}</td>
 			<td>{{stats.ratings['T0'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].attackers[player._id].sd.toFixed(2)}}</td>
 			<td>{{stats.ratings['T0'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].defenders[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T2'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].overall[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T2'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].attackers[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T2'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].defenders[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T4'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].overall[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T4'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].attackers[player._id].sd.toFixed(2)}}</td>
+			<td>{{stats.ratings['T4'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].defenders[player._id].sd.toFixed(2)}}</td>
 		</tr>
 	</table>
 </div>
