@@ -11,6 +11,7 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	};
 	$rootScope.model = model;
 	$rootScope.stats = stats;
+	$rootScope.playerSort = {};
 
 	var createPlayersMapping = function(players) {
 		var mapping = {};

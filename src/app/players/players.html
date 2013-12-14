@@ -15,29 +15,29 @@
 			<tr>
 				<th rowspan="2">Name</th>
 				<th colspan="5">OVERALL</th>
-				<th colspan="2">DEFENDER</th>
+				<th colspan="2"><DEFENDER></DEFENDER></th>
 				<th colspan="2">ATTACKER</th>
     			<th colspan="2" class="white">WHITE</th>
 				<th colspan="2" class="blue">BLUE</th>
 			</tr>
 			<tr class="sortable">
 
-				<th ng-click="changeSorting('games')">Games</th>
-				<th ng-click="changeSorting('win')">Win</th>
-				<th ng-click="changeSorting('loss')">Loss</th>
-				<th ng-click="changeSorting('mean')">Rating</th>
-				<th ng-click="changeSorting('winPerc')"style="width:140px">% of wins</th>
-				<th ng-click="changeSorting('winD')">Win</th>
-				<th ng-click="changeSorting('lossD')">Loss</th>
-				<th ng-click="changeSorting('winA')">Win</th>
-				<th ng-click="changeSorting('lossD')"style="width:140px">Loss</th>
-				<th ng-click="changeSorting('winW')">Win</th>
-				<th ng-click="changeSorting('lossW')">Loss</th>
-				<th ng-click="changeSorting('winB')">Win</th>
-				<th ng-click="changeSorting('lossB')">Loss</th>
+				<th sortable="playerSort" column="games">Games</th>
+				<th sortable="playerSort" column="win">Win</th>
+				<th sortable="playerSort" column="loss">Loss</th>
+				<th sortable="playerSort" column="mean">Rating</th>
+				<th sortable="playerSort" column="winPerc" style="width:140px">% of wins</th>
+				<th sortable="playerSort" column="winD">Win</th>
+				<th sortable="playerSort" column="lossD">Loss</th>
+				<th sortable="playerSort" column="winA">Win</th>
+				<th sortable="playerSort" column="lossA" style="width:140px">Loss</th>
+				<th sortable="playerSort" column="winW">Win</th>
+				<th sortable="playerSort" column="lossW">Loss</th>
+				<th sortable="playerSort" column="winB">Win</th>
+				<th sortable="playerSort" column="lossB">Loss</th>
 			</tr>
 		</thead>
-		<tr ng-repeat="tableRow in tableRows | orderBy:sort.column:sort.descending">
+		<tr ng-repeat="tableRow in tableRows | orderBy:playerSort.column:playerSort.descending">
 			<td>{{tableRow.name}}</td>
 			<td>{{tableRow.games}}</td>
 			<td>{{tableRow.win}}</td>

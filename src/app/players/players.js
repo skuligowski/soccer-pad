@@ -1,25 +1,11 @@
-angular.module('views.players', ['data.dataSource']).
+angular.module('views.players', ['data.dataSource','controls.sortable']).
 
 controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 
 
 	$scope.addPlayer = function() {
 		dataSource.addPlayer($scope.playerName);
-
 	}
-
-    $scope.changeSorting = function(column) {
-        var sort = $scope.sort;
-
-        if (sort.column == column) {
-            sort.descending = !sort.descending;
-        } else {
-            sort.column = column;
-            sort.descending = true;
-        }
-        $scope.sort = sort;
-
-    };
 
      var reloadTable = function() {
         $scope.tableRows = [];
@@ -54,4 +40,8 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
     $scope.$watch('model.players', reloadTable);
     reloadTable();
 }]);
+
+
+
+
 
