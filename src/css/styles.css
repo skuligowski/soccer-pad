@@ -84,4 +84,20 @@ html {
 .sortable {
     text-decoration: underline;
     cursor:pointer;
+    overflow: auto;
+}
+
+
+
+.sortColumn  {
+    text-decoration: underline;
+    cursor:pointer;
+    float: left;
+
+}
+
+.sortImage {
+    margin-top: 0px;
+    margin-left: 3px;
+    padding: 0px;
 }
