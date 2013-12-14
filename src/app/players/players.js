@@ -19,7 +19,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
 
     };
 
-     $scope.reloadTable = function() {
+     var reloadTable = function() {
         $scope.tableRows = [];
         for (var playerIndex in $scope.model.players) {
             var player = $scope.model.players[playerIndex],
@@ -48,5 +48,8 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
 
         }
     }
+
+    $scope.$watch('model.players', reloadTable);
+    reloadTable();
 }]);
 
