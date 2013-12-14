@@ -1,13 +1,15 @@
 angular.module('views.players', ['data.dataSource']).
 
 controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
+
+
 	$scope.addPlayer = function() {
 		dataSource.addPlayer($scope.playerName);
 
 	}
 
     $scope.changeSorting = function(column) {
-        var sort = $scope.sort || {};
+        var sort = $scope.sort;
 
         if (sort.column == column) {
             sort.descending = !sort.descending;
