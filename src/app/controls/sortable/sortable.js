@@ -1,6 +1,6 @@
-angular.module('controls.sortable', ['data.dataSource']).
+angular.module('controls.sortable', []).
 
-directive('sortable', [ '$document',function($document) {
+directive('sortable', [ function() {
 
     var changeSorting = function(sortable,column) {
         if (sortable.column == column) {
