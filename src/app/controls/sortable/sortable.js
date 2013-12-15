@@ -22,25 +22,19 @@ directive('sortable', [ function() {
         templateUrl: 'sortable',
 
         link: function(scope, elem, attrs) {
-            isSorted = function() {
-                return scope.column == scope.sort.column;
-            },
-            isDesc = function() {
-                return scope.sort.descending;
-            },
+
+            scope.$watch('sort', function() {
+                scope.isSorted = scope.column == scope.sort.column;
+                scope.isAsc = scope.sort.descending;
+            }, true);
+
             elem.bind('click', function(e) {
                 changeSorting(scope.sort,   scope.column)
                 scope.$apply();
 			});
-            scope.isSorted = isSorted;
-            scope.isDesc = isDesc;
 
         }
-
-
-    };
-
-
+   };
 }]);
 
 
