@@ -93,3 +93,8 @@ html {
 .sortPadded {
     padding-right:14px;
 }
+
+.glyphicon:hover {
+    cursor:pointer;
+    color: #696969;
+}
