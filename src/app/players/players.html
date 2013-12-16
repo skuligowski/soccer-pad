@@ -21,37 +21,37 @@
 				<th colspan="2" class="blue">BLUE</th>
 			</tr>
 			<tr>
-				<th>Games</th>
-				<th>Win</th>
-                <th>Loss</th>
-				<th>% of wins</th>
-				<th style="width:160px">Rating</th>
-                <th>Win</th>
-				<th>Loss</th>
-				<th>Win</th>
-				<th style="width:100px">Loss</th>
 
-				<th>Win</th>
-				<th>Loss</th>
-				<th>Win</th>
-				<th>Loss</th>
+				<th sortable="playerSort" column="games">Games</th>
+				<th sortable="playerSort" column="win">Win</th>
+				<th sortable="playerSort" column="loss">Loss</th>
+				<th sortable="playerSort" column="mean">Rating</th>
+				<th sortable="playerSort" column="winPerc" style="width:140px">% of wins</th>
+				<th sortable="playerSort" column="winD">Win</th>
+				<th sortable="playerSort" column="lossD">Loss</th>
+				<th sortable="playerSort" column="winA">Win</th>
+				<th sortable="playerSort" column="lossA" style="width:140px">Loss</th>
+				<th sortable="playerSort" column="winW">Win</th>
+				<th sortable="playerSort" column="lossW">Loss</th>
+				<th sortable="playerSort" column="winB">Win</th>
+				<th sortable="playerSort" column="lossB">Loss</th>
 			</tr>
 		</thead>
-		<tr ng-repeat="player in model.players">
-			<td>{{player.name}}</td>
-			<td>{{stats.players[player._id].games}}</td>
-			<td>{{stats.players[player._id].win}}</td>
-			<td>{{stats.players[player._id].loss}}</td>
-			<td>{{(stats.players[player._id].win / (stats.players[player._id].games + 0.0001) * 100).toFixed(0)}}%</td>
-			<td>{{stats.ratings[player._id].mean.toFixed(2)}} ± {{stats.ratings[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.players[player._id].winA + stats.players[player._id].winD}}</td>
-			<td>{{stats.players[player._id].lossA + stats.players[player._id].lossD}}</td>
-			<td>{{stats.players[player._id].winB + stats.players[player._id].winC}}</td>
-			<td>{{stats.players[player._id].lossB + stats.players[player._id].lossC}}</td>
-            <td class="white">{{stats.players[player._id].winA + stats.players[player._id].winB}}</td>
-			<td class="white">{{stats.players[player._id].lossA + stats.players[player._id].lossB}}</td>
-			<td class="blue">{{stats.players[player._id].winC + stats.players[player._id].winD}}</td>
-			<td class="blue">{{stats.players[player._id].lossC + stats.players[player._id].lossD}}</td>
+		<tr ng-repeat="tableRow in tableRows | orderBy:playerSort.column:playerSort.descending">
+			<td>{{tableRow.name}}</td>
+			<td>{{tableRow.games}}</td>
+			<td>{{tableRow.win}}</td>
+			<td>{{tableRow.loss}}</td>
+			<td>{{tableRow.mean.toFixed(2)}} ± {{tableRow.sd.toFixed(2)}}</td>
+			<td>{{tableRow.winPerc.toFixed(0)}}%</td>
+			<td>{{tableRow.winD}}</td>
+			<td>{{tableRow.lossD}}</td>
+			<td>{{tableRow.winA}}</td>
+			<td>{{tableRow.lossA}}</td>
+			<td class="white">{{tableRow.winW}}</td>
+			<td class="white">{{tableRow.lossW}}</td>
+			<td class="blue">{{tableRow.winB}}</td>
+			<td class="blue">{{tableRow.lossB}}</td>
 		</tr>
 	</table>
 
