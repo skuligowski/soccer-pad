@@ -29,7 +29,7 @@ directive('sortable', [ function() {
             }, true);
 
             elem.bind('click', function(e) {
-                changeSorting(scope.sort,   scope.column)
+                changeSorting(scope.sort, scope.column)
                 scope.$apply();
 			});
 

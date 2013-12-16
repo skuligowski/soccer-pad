@@ -7,7 +7,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
 		dataSource.addPlayer($scope.playerName);
 	}
 
-     var reloadTable = function() {
+    var reloadTable = function() {
         $scope.tableRows = [];
         for (var playerIndex in $scope.model.players) {
             var player = $scope.model.players[playerIndex],
