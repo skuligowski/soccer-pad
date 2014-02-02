@@ -16,6 +16,12 @@ controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 statsT4overall = stats.ratings['T4'].overall[playerId],
                 statsT4attackers = stats.ratings['T4'].attackers[playerId],
                 statsT4defenders = stats.ratings['T4'].defenders[playerId];
+                statsG5overall = stats.ratings['G5'].overall[playerId],
+                statsG5attackers = stats.ratings['G5'].attackers[playerId],
+                statsG5defenders = stats.ratings['G5'].defenders[playerId],
+                statsG10overall = stats.ratings['G10'].overall[playerId],
+                statsG10attackers = stats.ratings['G10'].attackers[playerId],
+                statsG10defenders = stats.ratings['G10'].defenders[playerId];;
 
             var ratingRow = {
                 name : player.name,
@@ -27,7 +33,13 @@ controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 statsT2defendersMean : statsT0defenders.mean, statsT2defenderssd : statsT0defenders.sd,
                 statsT4overallMean : statsT4overall.mean, statsT4overallsd : statsT4overall.sd,
                 statsT4attackersMean : statsT4attackers.mean, statsT4attackerssd : statsT4attackers.sd,
-                statsT4defendersMean : statsT0defenders.mean, statsT4defenderssd : statsT0defenders.sd
+                statsT4defendersMean : statsT0defenders.mean, statsT4defenderssd : statsT0defenders.sd,
+                statsG5overallMean : statsG5overall.mean, statsG5overallsd : statsG5overall.sd,
+                statsG5attackersMean : statsG5attackers.mean, statsG5attackerssd : statsG5attackers.sd,
+                statsG5defendersMean : statsG5defenders.mean, statsG5defenderssd : statsG5defenders.sd,
+                statsG10overallMean : statsG10overall.mean, statsG10overallsd : statsG10overall.sd,
+                statsG10attackersMean : statsG10attackers.mean, statsG10attackerssd : statsG10attackers.sd,
+                statsG10defendersMean : statsG10defenders.mean, statsG10defenderssd : statsG10defenders.sd
             }
             $scope.ratingRows.push(ratingRow);
 
