@@ -8,28 +8,29 @@
 				<th colspan="3">Threshold 4pt</th>
 			</tr>
 			<tr>
-				<th>Overall</th>
-				<th>Attacker</th>
-				<th>Defender</th>
-				<th>Overall</th>
-				<th>Attacker</th>
-				<th>Defender</th>
-				<th>Overall</th>
-				<th>Attacker</th>
-				<th>Defender</th>
+				<th sortable="ratingSort" column="statsT0overallMean">Overall</th>
+				<th sortable="ratingSort" column="statsT0attackersMean">Attacker</th>
+				<th sortable="ratingSort" column="statsT0defendersMean">Defender</th>
+				<th sortable="ratingSort" column="statsT2overallMean">Overall</th>
+				<th sortable="ratingSort" column="statsT2attackersMean">Attacker</th>
+				<th sortable="ratingSort" column="statsT2defendersMean">Defender</th>
+				<th sortable="ratingSort" column="statsT4overallMean">Overall</th>
+				<th sortable="ratingSort" column="statsT4attackersMean" >Attacker</th>
+				<th sortable="ratingSort" column="statsT4defendersMean">Defender</th>
 			</tr>
 		</thead>
-		<tr ng-repeat="player in model.players">
-			<td>{{player.name}}</td>
-			<td>{{stats.ratings['T0'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].overall[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T0'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].attackers[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T0'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T0'].defenders[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T2'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].overall[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T2'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].attackers[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T2'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T2'].defenders[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T4'].overall[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].overall[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T4'].attackers[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].attackers[player._id].sd.toFixed(2)}}</td>
-			<td>{{stats.ratings['T4'].defenders[player._id].mean.toFixed(2)}} ± {{stats.ratings['T4'].defenders[player._id].sd.toFixed(2)}}</td>
+		<tr ng-repeat="ratingRow in ratingRows | orderBy:ratingSort.column:ratingSort.descending">
+			<td>{{ratingRow.name}}</td>
+			<td>{{ratingRow.statsT0overallMean.toFixed(2)}} ± {{ratingRow.statsT0overallsd.toFixed(2)}}</td>
+            <td>{{ratingRow.statsT0attackersMean.toFixed(2)}} ± {{ratingRow.statsT0attackerssd.toFixed(2)}}</td>
+            <td>{{ratingRow.statsT0defendersMean.toFixed(2)}} ± {{ratingRow.statsT0defenderssd.toFixed(2)}}</td>
+			<td>{{ratingRow.statsT2overallMean.toFixed(2)}} ± {{ratingRow.statsT2overallsd.toFixed(2)}}</td>
+			<td>{{ratingRow.statsT2attackersMean.toFixed(2)}} ± {{ratingRow.statsT2attackerssd.toFixed(2)}}</td>
+			<td>{{ratingRow.statsT2defendersMean.toFixed(2)}} ± {{ratingRow.statsT2defenderssd.toFixed(2)}}</td>
+			<td>{{ratingRow.statsT4overallMean.toFixed(2)}} ± {{ratingRow.statsT4overallsd.toFixed(2)}}</td>
+            <td>{{ratingRow.statsT4attackersMean.toFixed(2)}} ± {{ratingRow.statsT4attackerssd.toFixed(2)}}</td>
+            <td>{{ratingRow.statsT4defendersMean.toFixed(2)}} ± {{ratingRow.statsT4defenderssd.toFixed(2)}}</td>
+			
 		</tr>
 	</table>
 </div>

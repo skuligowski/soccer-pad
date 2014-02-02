@@ -13,5 +13,10 @@ controller('AppCtrl', ['$scope', function($scope) {
 		column: 'mean',
 		descending: true
 	};
+    $scope.ratingSort = {
+		column: 'statsT0overallMean',
+		descending: true
+	};
+
 }]);
 
