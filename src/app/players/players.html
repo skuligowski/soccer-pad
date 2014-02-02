@@ -14,26 +14,16 @@
 		<thead>
 			<tr>
 				<th rowspan="2">Name</th>
-				<th colspan="5">OVERALL</th>
+				<th colspan="4">OVERALL</th>
 				<th colspan="2">DEFENDER</th>
 				<th colspan="2">ATTACKER</th>
 					<th colspan="2" class="white">WHITE</th>
 				<th colspan="2" class="blue">BLUE</th>
 			</tr>
 			<tr>
-				<th>Games</th>
-				<th>Win</th>
-								<th>Loss</th>
-				<th>% of wins</th>
-				<th style="width:160px">Rating</th>
-								<th>Win</th>
-				<th>Loss</th>
-				<th>Win</th>
-				<th style="width:100px">Loss</th>
 				<th sortable="playerSort" column="games">Games</th>
 				<th sortable="playerSort" column="win">Win</th>
 				<th sortable="playerSort" column="loss">Loss</th>
-				<th sortable="playerSort" column="mean">Rating</th>
 				<th sortable="playerSort" column="winPerc" style="width:140px">% of wins</th>
 				<th sortable="playerSort" column="winD">Win</th>
 				<th sortable="playerSort" column="lossD">Loss</th>
@@ -50,7 +40,6 @@
 			<td>{{tableRow.games}}</td>
 			<td>{{tableRow.win}}</td>
 			<td>{{tableRow.loss}}</td>
-			<td>{{tableRow.mean.toFixed(2)}} ± {{tableRow.sd.toFixed(2)}}</td>
 			<td>{{tableRow.winPerc.toFixed(0)}}%</td>
 			<td>{{tableRow.winD}}</td>
 			<td>{{tableRow.lossD}}</td>
