@@ -12,13 +12,16 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
         for (var playerIndex in $scope.model.players) {
             var player = $scope.model.players[playerIndex],
                 playerId = player._id,
-                playerStats = $scope.stats.players[playerId];
+                playerStats = $scope.stats.players[playerId],
+                playerRatings = $scope.stats.ratings['T0'].overall[playerId];
 
             var tableRow = {
                 name : player.name,
                 games : playerStats.games,
                 win : playerStats.win,
                 loss : playerStats.loss,
+                mean : playerRatings.mean,
+                sd : playerRatings.sd,
                 winPerc : (playerStats.win / (playerStats.games + 0.0001))*100,
                 winD : playerStats.winD + playerStats.winA,
                 lossD : playerStats.lossD + playerStats.lossA,
