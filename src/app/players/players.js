@@ -28,7 +28,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 winA : playerStats.winC + playerStats.winB,
                 lossA : playerStats.lossC + playerStats.lossB,
                 winW : playerStats.winA + playerStats.winB,
-                lossW : playerStats.lossA + playerStats.lossA,
+                lossW : playerStats.lossA + playerStats.lossB,
                 winB : playerStats.winC + playerStats.winD,
                 lossB : playerStats.lossC + playerStats.lossD
             }
