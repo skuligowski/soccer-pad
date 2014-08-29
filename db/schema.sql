@@ -1,0 +1,25 @@
+DROP DATABASE IF EXISTS soccer_pad;
+CREATE DATABASE soccer_pad CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+USE soccer_pad;
+
+DROP TABLE IF EXISTS players;
+
+CREATE TABLE players (
+	uid VARCHAR(64) NOT NULL,
+	name VARCHAR(128),
+PRIMARY KEY (uid)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS games;
+
+CREATE TABLE games (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	blueDefender VARCHAR(64) NOT NULL,
+	blueAttacker VARCHAR(64) NOT NULL,
+	whiteDefender VARCHAR(64) NOT NULL,
+	whiteAttacker VARCHAR(64) NOT NULL,
+	blueScore INT NOT NULL,
+	whiteScore INT NOT NULL,
+	gameDate DATETIME,
+PRIMARY KEY (id)) ENGINE = InnoDB;

@@ -1,26 +1,22 @@
-var MongoClient = require('mongodb').MongoClient;
 var Players = require('./players');
-var Games = require('./games');
 var Ratings = require('./ratings');
+var db = require('./data-source');
+var Q = require('q');
 var myDb;
-
-var connect = function() {
-    MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function (err, db) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        myDb = db;
-
-        calculateStats(myDb);
-    });
-}
-
-connect();
 
 exports.init = function(server) {
 
-	server.get('/api/init', function(req, res) {
+    server.get('/api/init', function(req, res) {
+        Q.all([db.findPlayers(), db.findGames()]).
+        spread(function(players, games) {
+            res.send({
+                players: players,
+                games: games
+            })
+        });
+    });
+
+	server.get('/api/init2', function(req, res) {
 		retrieveStats(myDb, function(players, playersStats, playersRatings)  {
             Games.find(myDb, function(games) {
                 var data = {

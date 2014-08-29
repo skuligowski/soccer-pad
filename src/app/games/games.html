@@ -15,16 +15,16 @@
 		</thead>
 		<tr ng-repeat="game in paged.games" >
 			<td class="col-xs-3">{{game.date}}</td>
-			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.A].name}}</td>
-			<td class="col-xs-1">{{model.playersMapping[game.table.B].name}}</td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.whiteDefender].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.whiteAttacker].name}}</td>
 			<td class="col-xs-1"></td>
-			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.D].name}}</td>
-			<td class="col-xs-1">{{model.playersMapping[game.table.C].name}}</td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.blueDefender].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.blueAttacker].name}}</td>
 			<td class="col-xs-1"></td>
-			<td class="col-xs-1">{{game.score.white}} : {{game.score.blue}}</td>
+			<td class="col-xs-1">{{game.whiteScore}} : {{game.blueScore}}</td>
 			<td class="col-xs-2">
 				<span class="label label-info" ng-show="game.new">New</span>
-				<span class="label label-success" ng-show="!game.score.white || !game.score.blue">{{game.score.white}} : {{game.score.blue}}</span>
+				<span class="label label-success" ng-show="!game.whiteScore || !game.blueScore">{{game.whiteScore}} : {{game.blueScore}}</span>
 			</td>
 		</tr>
 	</table>

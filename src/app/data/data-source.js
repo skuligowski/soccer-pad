@@ -15,7 +15,7 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	var createPlayersMapping = function(players) {
 		var mapping = {};
 		for(var i = 0; i < players.length; i++)
-			mapping[players[i]._id] = players[i];
+			mapping[players[i].uid] = players[i];
 		return mapping;
 	};
 
@@ -23,8 +23,8 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 		model.players = data.players;
 		model.playersMapping = createPlayersMapping(data.players);
 		model.games = data.games;
-		stats.players = data.stats.players;
-        stats.ratings = data.stats.ratings;
+		//stats.players = data.stats.players;
+        //stats.ratings = data.stats.ratings;
 	});
 
 	return {

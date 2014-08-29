@@ -11,7 +11,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
         $scope.tableRows = [];
         for (var playerIndex in $scope.model.players) {
             var player = $scope.model.players[playerIndex],
-                playerId = player._id,
+                playerId = player.uid,
                 playerStats = $scope.stats.players[playerId],
                 playerRatings = $scope.stats.ratings[playerId];
 
