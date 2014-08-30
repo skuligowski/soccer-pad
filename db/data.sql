@@ -16,8 +16,13 @@ INSERT INTO players VALUES ('wojtek', 'Wojtek');
 DELETE FROM games;
 
 INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
-	VALUES('beti', 'aga', 'wojtek', 'filip', 4, 10, NOW() - INTERVAL 12 DAY);
+	VALUES('beti', 'aga', 'wojtek', 'filip', 1, 10, NOW() - INTERVAL 12 DAY);
 
+/*INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
+	VALUES('beti', 'aga', 'wojtek', 'filip', 1, 10, NOW() - INTERVAL 10 DAY);
+*/
+
+/*
 INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
 	VALUES('beti', 'ela', 'wojtek', 'diego', 10, 6, NOW() - INTERVAL 7 DAY);
 
@@ -29,4 +34,5 @@ INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blu
 
 INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
 	VALUES('tomek', 'diego', 'aga', 'wojtek', 0, 10, NOW() - INTERVAL 1 DAY);
+	*/
 COMMIT;

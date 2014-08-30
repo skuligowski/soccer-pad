@@ -16,6 +16,14 @@ exports.init = function(server) {
         });
     });
 
+    server.get('/api/recalculate', function(req, res) {
+        db.findGames().then(function(games) {
+            console.log('start');
+            Ratings.calculate(games);
+        });
+        res.send({});
+    });
+
 	server.get('/api/init2', function(req, res) {
 		retrieveStats(myDb, function(players, playersStats, playersRatings)  {
             Games.find(myDb, function(games) {
