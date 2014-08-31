@@ -70,8 +70,7 @@ exports.init = function(server) {
 	server.post('/api/games/add', function(req, res) {
 		var game = req.body; 
 		game.date = new Date();
-        db.insertGame(game).then(function(insertAction) {
-            game.id = insertAction.insertId;
+        db.insertGame(game).then(function(game) {            
             res.send({
                 game: game
             });
