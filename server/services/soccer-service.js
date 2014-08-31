@@ -68,9 +68,11 @@ exports.init = function(server) {
 	});
 
 	server.post('/api/games/add', function(req, res) {
-		var game = req.body; 
-		game.date = new Date();
-        db.insertGame(game).then(function(game) {            
+		var game = req.body; 		
+        db.insertGame(game).then(function(game) {
+            // get all userratings for the game of 4 users
+            // calculate new ratings
+            // return new ratings        
             res.send({
                 game: game
             });
