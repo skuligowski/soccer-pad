@@ -13,7 +13,7 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 			angular.forEach($scope.table, function(player, index) {
 				if (index == position) return;
 
-				if (player && player._id == newPlayer._id)
+				if (player && player.uid == newPlayer.uid)
 					$scope.table[index] = null;
 			});
 		});

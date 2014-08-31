@@ -23,3 +23,25 @@ CREATE TABLE games (
 	whiteScore INT NOT NULL,
 	gameDate DATETIME,
 PRIMARY KEY (id)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS rating_periods;
+
+CREATE TABLE rating_periods (
+	uid VARCHAR(64) NOT NULL,
+	title VARCHAR(64) NOT NULL,
+	fromDate DATE NOT NULL,
+	toDate DATE NOT NULL,
+PRIMARY KEY (uid)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS ratings;
+
+CREATE TABLE ratings (
+	period_uid VARCHAR(64) NOT NULL,
+	player_uid VARCHAR(64) NOT NULL,
+	ratingDate DATETIME NOT NULL,
+	mean FLOAT(12,2) NOT NULL,
+	sd FLOAT(12,2) NOT NULL,
+PRIMARY KEY(period_uid, player_uid, ratingDate)) ENGINE = InnoDB;
+
