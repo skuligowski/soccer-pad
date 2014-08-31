@@ -21,7 +21,7 @@ CREATE TABLE games (
 	whiteAttacker VARCHAR(64) NOT NULL,
 	blueScore INT NOT NULL,
 	whiteScore INT NOT NULL,
-	gameDate DATETIME,
+	date DATETIME,
 PRIMARY KEY (id)) ENGINE = InnoDB;
 
 

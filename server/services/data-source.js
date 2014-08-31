@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var Q = require('q');
 var pool = mysql.createPool({
+  dateStrings: false,
   connectionLimit: 5,
   host: 'localhost',
   database: 'soccer_pad',
@@ -25,7 +26,10 @@ exports.findPlayers = function() {
 }
 
 exports.findGames = function() {
-	return query('SELECT id, DATE_FORMAT(gameDate, "%Y-%m-%d %H:%i:%s") date, \
-		blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, \
-		whiteScore FROM games ORDER BY gameDate DESC');
+	return query('SELECT id, date, blueDefender, blueAttacker, \
+		whiteDefender, whiteAttacker, blueScore, whiteScore FROM games ORDER BY date DESC');
+}
+
+exports.insertGame = function(game) {
+	return query('INSERT INTO games SET ?', game);
 }

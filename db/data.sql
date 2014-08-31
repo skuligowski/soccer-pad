@@ -15,7 +15,7 @@ INSERT INTO players VALUES ('wojtek', 'Wojtek');
 
 DELETE FROM games;
 
-INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
+INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, date)
 	VALUES('beti', 'aga', 'wojtek', 'filip', 1, 10, NOW() - INTERVAL 12 DAY);
 
 /*INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)

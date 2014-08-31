@@ -70,8 +70,14 @@ exports.init = function(server) {
 	server.post('/api/games/add', function(req, res) {
 		var game = req.body; 
 		game.date = new Date();
-		var collection = myDb.collection('games');
-        collection.insert(game,
+        db.insertGame(game).then(function(insertAction) {
+            game.id = insertAction.insertId;
+            res.send({
+                game: game
+            });
+        });
+		//var collection = myDb.collection('games');
+        /*collection.insert(game,
             {safe: true},
             function(err, addedGames) {
                 calculateStats(myDb, function() {
@@ -88,7 +94,7 @@ exports.init = function(server) {
                 });
 
             }
-		);	
+		);*/	
 	});
 }
 

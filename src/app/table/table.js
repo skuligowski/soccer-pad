@@ -45,16 +45,12 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 
 	$scope.save = function() {
 		var game = {
-			table: {
-				A: $scope.table.A._id,
-				B: $scope.table.B._id,
-				C: $scope.table.C._id,
-				D: $scope.table.D._id
-			},
-			score: {
-				white: parseInt($scope.score.white),
-				blue: parseInt($scope.score.blue)
-			}
+			whiteDefender: $scope.table.whiteDefender.uid,
+			whiteAttacker: $scope.table.whiteAttacker.uid,
+			blueDefender: $scope.table.blueDefender.uid,
+			blueAttacker: $scope.table.blueAttacker.uid,
+			whiteScore: parseInt($scope.score.white),
+			blueScore: parseInt($scope.score.blue)
 		};
 		dataSource.addGame(game);
 		$scope.app.tab = {
