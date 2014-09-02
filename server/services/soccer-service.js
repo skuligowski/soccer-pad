@@ -6,7 +6,7 @@ var myDb;
 
 exports.init = function(server) {
 
-    server.get('/api/init', function(req, res) {
+    server.get('/api/init', function(req, res) {        
         Q.all([db.findPlayers(), db.findGames()]).
         spread(function(players, games) {
             res.send({
@@ -14,14 +14,6 @@ exports.init = function(server) {
                 games: games
             })
         });
-    });
-
-    server.get('/api/recalculate', function(req, res) {
-        db.findGames().then(function(games) {
-            console.log('start');
-            Ratings.calculate(games);
-        });
-        res.send({});
     });
 
 	server.get('/api/init2', function(req, res) {
@@ -70,13 +62,22 @@ exports.init = function(server) {
 	server.post('/api/games/add', function(req, res) {
 		var game = req.body; 		
         db.insertGame(game).then(function(game) {
-            // get all userratings for the game of 4 users
-            // calculate new ratings
-            // return new ratings        
+            return db.findRatingPeriods(game.date);
+        }).then(function(periods) {
+            db.findPlayersRatingsMap(periods).then(function(ratings) {
+                console.log(periods);
+                for(var i = 0; i < periods.length; i++) {                    
+                    var periodUid = periods[i],
+                        newRatings = Ratings.calculate([game], ratings[periodUid]);
+                    db.replacePlayersRatings(periodUid, newRatings);
+                }
+            })
+        }).then(function(ratings) {
             res.send({
                 game: game
             });
         });
+
 		//var collection = myDb.collection('games');
         /*collection.insert(game,
             {safe: true},

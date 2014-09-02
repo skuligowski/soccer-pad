@@ -1,18 +1,25 @@
-var jst = require('jstrueskill');
+var jst = require('jstrueskill'),
+    _ = require('lodash');
+
+jst.Player.prototype.toString = function() {
+    return this.id;
+}
 
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
     defaultRating = defaultGameInfo.getDefaultRating(),
     trueSkillCalculator = new jst.FactorGraphTrueSkillCalculator();
 
-exports.calculate = function(games, lastRatings) {
+exports.calculate = function(games, lastRatingsMap) {  
+    console.log(lastRatingsMap);
     var players = {},
-        ratings = {},
-        lastRatings = lastRatings || {},
+        ratings = {},        
+        lastRatingsMap = lastRatingsMap || {},
+
         findPlayer = function(playerUid) {
             var player = players[playerUid];
             if (!player) {
                 players[playerUid] = player = new jst.Player(playerUid);
-                var playerRating = lastRatings[playerUid];
+                var playerRating = lastRatingsMap[playerUid];
                 ratings[player] = playerRating ? 
                     new jst.Rating(playerRating.mean, playerRating.sd) : defaultRating;
             }
@@ -21,6 +28,7 @@ exports.calculate = function(games, lastRatings) {
                 rating: ratings[player]
             };
         },
+
         addPlayer = function(team, playerUid) {
             var player = findPlayer(playerUid);
             team.addPlayer(player.player, player.rating);
@@ -38,27 +46,15 @@ exports.calculate = function(games, lastRatings) {
         addPlayer(whiteTeam, game.whiteAttacker);
         
         var ratingsMap = trueSkillCalculator.calculateNewRatings(defaultGameInfo, [blueTeam, whiteTeam], rankArray);
-        for(var player in ratingsMap) {            
-            if (ratingsMap.hasOwnProperty(player)) {
-                ratings[player] = ratingsMap[player];
-            }
-        }
+        _.assign(ratings, ratingsMap);
     }    
-    console.log(ratings);
-}
-
-exports.find = function(db, playersCollection,  callback) {
-    playersCollection.find().sort({'name': 1}).toArray(function(err, players) {
-        db.collection('players_ratings').find().toArray(function(err, ratingsArray) {
-            var idToRatingsMap = ratingsArray[0];
-            for (var playerIndex in players) {
-                var playerId = players[playerIndex]._id;
-                if (!(playerId  in idToRatingsMap )) {
-                    idToRatingsMap[playerId] = { mean : defaultRating.getMean(), sd : defaultRating.getStandardDeviation()};
-                }
-            }
-            callback && callback(idToRatingsMap);
-        });
+    
+    return _.map(ratings, function(rating, playerUid) {
+        return {
+            playerUid: playerUid,
+            mean: rating.mean,
+            sd: rating.standardDeviation
+        };
     });
 }
 
