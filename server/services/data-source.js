@@ -23,22 +23,23 @@ var resultCallback = function(connection, deferred) {
 	};
 }
 
-var query = function() {
-	var deferred = Q.defer(),
-		args = [].slice.call(arguments),
-		connection = args[0];
+var getQuery = function(connection) {
+	return function() {
+		var deferred = Q.defer(),
+			args = [].slice.call(arguments);
 
-	args.push(resultCallback(connection, deferred));
+		args.push(resultCallback(connection, deferred));
 
-	connection.query.apply(connection, args.slice(1));
-	return deferred.promise;
+		connection.query.apply(connection, args);
+		return deferred.promise;
+	}
 }
 
 exports.conn = function(callback) {
 	pool.getConnection(function(err, connection) {
 		if (err) throw err;
 		
-		var db = getDb(connection);
+		var db = getDb(getQuery(connection));
 		db.close = function() {
 			connection.release();
 		}
@@ -53,7 +54,7 @@ exports.begin = function(callback) {
 		connection.beginTransaction(function(err) {
   			if (err) throw err;
 		
-			var db = getDb(connection);
+			var db = getDb(getQuery(connection));
 			db.commit = function() {
 				connection.commit(function(err) {
 					if (err) { 
@@ -86,21 +87,21 @@ var valuesOf = function(key) {
 
 var uidFlatValues = valuesOf('uid');
 
-var getDb = function(connection) {
+var getDb = function(query) {
 	return {
 
 		findPlayers: function() {
-			return query(connection, 'SELECT * FROM players');			
+			return query('SELECT * FROM players');			
 		},
 
 		findGames: function() {
-			return query(connection, 'SELECT id, date, blueDefender, blueAttacker, \
+			return query('SELECT id, date, blueDefender, blueAttacker, \
 				whiteDefender, whiteAttacker, blueScore, whiteScore FROM games ORDER BY date DESC');
 		},
 
 		insertGame: function(game) {
 			game.date = new Date();
-			return query(connection, 'INSERT INTO games SET ?', game).then(function(insert) {
+			return query('INSERT INTO games SET ?', game).then(function(insert) {
 				game.id = insert.insertId;
 				return game;
 			});
@@ -108,12 +109,12 @@ var getDb = function(connection) {
 
 		findRatingPeriods: function(gameDate) {
 			gameDate.setMilliseconds(0);
-			return query(connection, 'SELECT p.uid FROM rating_periods p WHERE ? BETWEEN p.fromDate AND p.toDate', gameDate).
+			return query('SELECT p.uid FROM rating_periods p WHERE ? BETWEEN p.fromDate AND p.toDate', gameDate).
 				then(uidFlatValues);
 		},
 
-		findPlayersRatingsMap: function(periods, players) {
-			return query(connection, 'SELECT * FROM ratings r WHERE r.periodUid in (?) FOR UPDATE', [periods]).then(function(ratings) {
+		findPlayersRatingsMap: function(periods) {
+			return query('SELECT * FROM ratings r WHERE r.periodUid in (?) FOR UPDATE', [periods]).then(function(ratings) {
 				var map = {};
 				for(var i = 0; i < ratings.length; i++) {
 					var rating = ratings[i];
@@ -130,7 +131,7 @@ var getDb = function(connection) {
 			var queries = [];
 			_.forEach(ratings, function(rating) {
 				rating.periodUid = periodUid;		
-				queries.push(query(connection, 'REPLACE INTO ratings SET ?', rating));
+				queries.push(query('REPLACE INTO ratings SET ?', rating));
 			})
 			return Q.all(queries);
 		}
