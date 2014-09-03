@@ -1,19 +1,23 @@
 var Players = require('./players');
 var Ratings = require('./ratings');
-var db = require('./data-source');
+var ds = require('./data-source');
 var Q = require('q');
 var myDb;
 
 exports.init = function(server) {
 
     server.get('/api/init', function(req, res) {        
-        Q.all([db.findPlayers(), db.findGames()]).
-        spread(function(players, games) {
-            res.send({
-                players: players,
-                games: games
-            })
-        });
+        ds.conn(function(db) {
+            Q.all([db.findPlayers(), db.findGames()]).
+            spread(function(players, games) {
+                res.send({
+                    players: players,
+                    games: games
+                });
+                db.close();
+            });            
+        })
+        
     });
 
 	server.get('/api/init2', function(req, res) {
@@ -60,23 +64,25 @@ exports.init = function(server) {
 	});
 
 	server.post('/api/games/add', function(req, res) {
-		var game = req.body; 		
-        db.insertGame(game).then(function(game) {
-            return db.findRatingPeriods(game.date);
-        }).then(function(periods) {
-            db.findPlayersRatingsMap(periods).then(function(ratings) {
-                console.log(periods);
-                for(var i = 0; i < periods.length; i++) {                    
-                    var periodUid = periods[i],
-                        newRatings = Ratings.calculate([game], ratings[periodUid]);
-                    db.replacePlayersRatings(periodUid, newRatings);
-                }
+		var game = req.body;
+        ds.begin(function(db) {
+            db.insertGame(game).then(function(game) {
+                return db.findRatingPeriods(game.date);
+            }).then(function(periods) {
+                db.findPlayersRatingsMap(periods).then(function(ratings) {
+                    for(var i = 0; i < periods.length; i++) {                    
+                        var periodUid = periods[i],
+                            newRatings = Ratings.calculate([game], ratings[periodUid]);
+                        db.replacePlayersRatings(periodUid, newRatings);
+                    }
+                }).then(function(ratings) {
+                    res.send({
+                        game: game
+                    });
+                    db.commit();
+                });
             })
-        }).then(function(ratings) {
-            res.send({
-                game: game
-            });
-        });
+        })
 
 		//var collection = myDb.collection('games');
         /*collection.insert(game,
