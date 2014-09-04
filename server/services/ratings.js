@@ -7,31 +7,56 @@ jst.Player.prototype.toString = function() {
 
 var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
     defaultRating = defaultGameInfo.getDefaultRating(),
-    trueSkillCalculator = new jst.FactorGraphTrueSkillCalculator();
+    trueSkillCalculator = new jst.FactorGraphTrueSkillCalculator(),
+    ratingsList = ['bATotal', 'bAWins', 'bDTotal', 'bDWins', 'wATotal', 'wAWins', 'wDTotal', 'wDWins', 'greenBadgesTotal']
+
+    getDefaultPlayer = function(playerUid) {
+        return {
+            jstPlayer: new jst.Player(playerUid),
+            jstRating: defaultRating,
+            ratings: _.reduce(ratingsList, function(result, key) { 
+                result[key] = 0; 
+                return result; 
+            }, {})
+        };
+    },
+
+    getPlayerWithRatings = function(playerUid, ratings) {
+        return {
+            jstPlayer: new jst.Player(playerUid),
+            jstRating: new jst.Rating(ratings.tsMean, ratings.tsSd),
+            ratings: _.reduce(ratingsList, function(result, key) { 
+                result[key] = ratings[key]; 
+                return result; 
+            }, {})
+        };
+    };
 
 exports.calculate = function(games, lastRatingsMap) {  
     console.log(lastRatingsMap);
     var players = {},
-        ratings = {},        
+        ratings = {},
         lastRatingsMap = lastRatingsMap || {},
 
         findPlayer = function(playerUid) {
             var player = players[playerUid];
             if (!player) {
-                players[playerUid] = player = new jst.Player(playerUid);
-                var playerRating = lastRatingsMap[playerUid];
-                ratings[player] = playerRating ? 
-                    new jst.Rating(playerRating.mean, playerRating.sd) : defaultRating;
+                var lastPlayerRatings = lastRatingsMap[playerUid];
+                players[playerUid] = player = 
+                    lastPlayerRatings ? getPlayerWithRatings(playerUid, lastPlayerRatings) : getDefaultPlayer(playerUid);
             }
-            return {
-                player: player,
-                rating: ratings[player]
-            };
+            return player;
         },
 
         addPlayer = function(team, playerUid) {
             var player = findPlayer(playerUid);
-            team.addPlayer(player.player, player.rating);
+            team.addPlayer(player.jstPlayer, player.jstRating);
+        },
+
+        updateRatings = function(playerUid, position, playerScore) {
+            players[playerUid].ratings[position + 'Total'] += 1;
+            players[playerUid].ratings[position + 'Wins'] += playerScore == 10
+            players[playerUid].ratings['greenBadgesTotal'] += playerScore == 0;
         };
 
     for(var i = 0; i < games.length; i++) {
@@ -46,15 +71,22 @@ exports.calculate = function(games, lastRatingsMap) {
         addPlayer(whiteTeam, game.whiteAttacker);
         
         var ratingsMap = trueSkillCalculator.calculateNewRatings(defaultGameInfo, [blueTeam, whiteTeam], rankArray);
-        _.assign(ratings, ratingsMap);
+        _.forEach(ratingsMap, function(calculatedRating, playerUid) {
+            players[playerUid].jstRating = calculatedRating;
+        });
+
+        updateRatings(game.blueDefender, 'bD', game.blueScore);
+        updateRatings(game.blueAttacker, 'bA', game.blueScore);
+        updateRatings(game.whiteDefender, 'wD', game.whiteScore);
+        updateRatings(game.whiteAttacker, 'wA', game.whiteScore);
     }    
     
-    return _.map(ratings, function(rating, playerUid) {
-        return {
+    return _.map(players, function(player, playerUid) {
+        return _.assign({
             playerUid: playerUid,
-            mean: rating.mean,
-            sd: rating.standardDeviation
-        };
+            tsMean: player.jstRating.mean,
+            tsSd: player.jstRating.standardDeviation,            
+        }, player.ratings);
     });
 }
 
