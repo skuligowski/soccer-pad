@@ -70,19 +70,21 @@ exports.init = function(server) {
                 return db.findRatingPeriods(game.date);
             }).then(function(periods) {
                 db.findPlayersRatingsMap(periods).then(function(ratings) {
+                    var replaceActions = [];
                     for(var i = 0; i < periods.length; i++) {                    
                         var periodUid = periods[i],
                             newRatings = Ratings.calculate([game], ratings[periodUid]);
-                        db.replacePlayersRatings(periodUid, newRatings);
+                        replaceActions.push(db.replacePlayersRatings(periodUid, newRatings));
                     }
+                    return Q.all(replaceActions);
                 }).then(function(ratings) {
                     res.send({
                         game: game
                     });
                     db.commit();
                 });
-            })
-        })
+            });
+        });
 
 		//var collection = myDb.collection('games');
         /*collection.insert(game,
