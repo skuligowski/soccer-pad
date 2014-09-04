@@ -94,9 +94,9 @@ var getDb = function(query) {
 			return query('SELECT * FROM players');			
 		},
 
-		findGames: function() {
+		findGames: function(order) {
 			return query('SELECT id, date, blueDefender, blueAttacker, \
-				whiteDefender, whiteAttacker, blueScore, whiteScore FROM games ORDER BY date DESC');
+				whiteDefender, whiteAttacker, blueScore, whiteScore FROM games ORDER BY date ' + (order || 'DESC'));
 		},
 
 		insertGame: function(game) {
@@ -134,6 +134,15 @@ var getDb = function(query) {
 				queries.push(query('REPLACE INTO ratings SET ?', rating));
 			})
 			return Q.all(queries);
+		},
+
+		clearRatings: function() {
+			return query('DELETE FROM ratings');
+		},
+
+		findAllRatingPeriods: function() {
+			return query('SELECT p.uid FROM rating_periods p').
+				then(uidFlatValues);
 		}
 
 	}

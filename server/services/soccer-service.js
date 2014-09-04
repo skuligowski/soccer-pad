@@ -62,6 +62,27 @@ exports.init = function(server) {
 			}
 		);
 	});
+    
+    server.get('/api/ratings/recalculate', function(req, res) {
+        ds.begin(function(db) {
+            Q.all([db.findAllRatingPeriods(), db.findGames('ASC'), db.clearRatings()]).
+            spread(function(periods, games) {
+                var replaceActions = [];
+                for(var i = 0; i < periods.length; i++) {
+                    var periodUid = periods[i],
+                        newRatings = Ratings.calculate(games);
+                    replaceActions.push(db.replacePlayersRatings(periodUid, newRatings));
+                }
+                return Q.all(replaceActions);
+            }).then(function() {
+                db.commit();
+                res.send({});
+            }).catch(function(err) {
+                console.log(err);
+            });
+        });
+
+    });
 
 	server.post('/api/games/add', function(req, res) {
 		var game = req.body;
@@ -85,26 +106,6 @@ exports.init = function(server) {
                 });
             });
         });
-
-		//var collection = myDb.collection('games');
-        /*collection.insert(game,
-            {safe: true},
-            function(err, addedGames) {
-                calculateStats(myDb, function() {
-                    retrieveStats(myDb, function(players, playersStats, playersRatings) {
-                        var data = {
-                            stats: {
-                                players: playersStats,
-                                ratings : playersRatings
-                            },
-                            game: addedGames[0]
-                        };
-                       res.send(data)
-                    });
-                });
-
-            }
-		);*/	
 	});
 }
 
