@@ -2,6 +2,7 @@ angular.module('myApp', [
 	'ngAnimate',
 	'views.table',
 	'views.players',
+	'views.ratings',
 	'views.games'
 ]).
 

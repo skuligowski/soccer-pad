@@ -54,13 +54,14 @@ exports.init = function(server) {
                         replaceActions.push(db.replacePlayersRatings(periodUid, newRatings));
                     }
                     return Q.all(replaceActions);
+                }).then(function() {
+                    return db.findAllRatingsMap();                    
                 }).then(function(ratings) {
                     res.send({
-                        game: game
+                        game: game,
+                        ratings: ratings
                     });
                     db.commit();
-                }).catch(function(err) {
-                    console.log(err)
                 });
             });
         });

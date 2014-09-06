@@ -37,11 +37,9 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 		},
 		addGame: function(game) {
 			$http.post('/api/games/add', game).success(function(data) {
-			    //stats.players = data.stats.players;
-                //stats.ratings = data.stats.ratings;
-				//data.game.new = true;
 				model.games.splice(0, 0, data.game);
 				model.games = model.games.concat([]);
+				model.ratings = data.ratings;
 			});
 		} 
 	}
