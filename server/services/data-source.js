@@ -30,6 +30,8 @@ var getConnectionQuery = function(connection) {
 	return function() {
 		var deferred = Q.defer(),
 			args = [].slice.call(arguments);
+		
+		console.log('SQL: [transaction] ' + args[0]);
 
 		args.push(resultCallback(connection, deferred));
 
@@ -42,6 +44,8 @@ var getPooledQuery = function() {
 	return function() {
 		var deferred = Q.defer(),
 			args = [].slice.call(arguments);
+
+		console.log('SQL: ' + args[0]);
 
 		args.push(function(err, result) {
 			if (err)

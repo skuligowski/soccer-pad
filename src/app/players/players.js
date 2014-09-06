@@ -2,14 +2,16 @@ angular.module('views.players', ['data.dataSource','controls.sortable']).
 
 controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 
+    $scope.selectedPeriod = $scope.model.periods[0];
 
 	$scope.addPlayer = function() {
 		dataSource.addPlayer($scope.playerName);
 	}
 
     var reloadTable = function() {
+        console.log('asdasda');
         var players = $scope.model.players,
-            ratings = $scope.model.ratings['overall'];
+            ratings = $scope.model.ratings[$scope.selectedPeriod.uid];
         $scope.tableRows = [];
         for (var i = 0; i < players.length; i++) {
             var player = players[i],
@@ -44,6 +46,7 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
     }
 
     $scope.$watch('model.players', reloadTable);
+    $scope.$watch('selectedPeriod', reloadTable);
     reloadTable();
 }]);
 

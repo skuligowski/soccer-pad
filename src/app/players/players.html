@@ -7,6 +7,13 @@
 		</div>
 		<button type="submit" class="btn btn-primary" ng-click="addPlayer()">Add player</button>
 	</form>
+	
+
+	<ul bts-combo ng-model="selectedPeriod">
+		<li ng-repeat="period in model.periods" bts-combo-item="period" bts-combo-label="period.title">
+			<a tabindex="-1" href="#">{{period.title}}</a>
+		</li>
+	</ul>
 
 	<hr/>
 
@@ -36,7 +43,7 @@
 				<th sortable="playerSort" column="lossW">Loss</th>
 				<th sortable="playerSort" column="winB">Win</th>
 				<th sortable="playerSort" column="lossB">Loss</th>
-				<th sortable="playerSort" column="greenBadges"><span class="label label-success">10:0</span></th>
+				<th sortable="playerSort" column="greenBadges"><span class="label label-success">10 : 0</span></th>
 			</tr>
 		</thead>
 		<tr ng-repeat="tableRow in tableRows | orderBy:playerSort.column:playerSort.descending">

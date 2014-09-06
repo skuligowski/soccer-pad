@@ -31,9 +31,12 @@ exports.getDb = function(query) {
 			return query('SELECT * FROM players');			
 		},
 
-		findGames: function(order) {
-			return query('SELECT id, date, blueDefender, blueAttacker, \
-				whiteDefender, whiteAttacker, blueScore, whiteScore FROM games ORDER BY date ' + (order || 'DESC'));
+		findGames: function() {
+			return query('SELECT * FROM games ORDER BY date DESC');
+		},
+
+		findGamesForRatingPeriod: function(periodUid) {
+			return query('SELECT g.* FROM games g, rating_periods p WHERE g.date BETWEEN p.fromDate AND p.toDate AND p.uid = ? ORDER BY g.date ASC', periodUid);
 		},
 
 		insertGame: function(game) {
@@ -51,10 +54,9 @@ exports.getDb = function(query) {
 		},
 
 		findAllRatingPeriods: function() {
-			return query('SELECT p.uid FROM rating_periods p ORDER BY p.uid DESC').
-				then(uidFlatValues);
+			return query('SELECT * FROM rating_periods p ORDER BY p.toDate DESC');
 		},
- 
+
 		findPlayersRatingsMap: function(periods) {
 			return query('SELECT * FROM ratings r WHERE r.periodUid in (?) FOR UPDATE', [periods]).
 				then(toRatingsMap);
@@ -76,12 +78,6 @@ exports.getDb = function(query) {
 
 		clearRatings: function() {
 			return query('DELETE FROM ratings');
-		},
-
-		findAllRatingPeriods: function() {
-			return query('SELECT p.uid FROM rating_periods p').
-				then(uidFlatValues);
 		}
-
 	}
 }

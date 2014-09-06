@@ -1,4 +1,4 @@
-<ul bts-combo toggle-default="" ng-model="selectedPlayer">
+<ul bts-combo toggle-default="" ng-model="selectedPlayer" template="selectorDropdown">
 	<li ng-repeat="player in players" bts-combo-item="player" bts-combo-label="player.name">
 		<a tabindex="-1" href="#">{{player.name}}</a>
 	</li>
