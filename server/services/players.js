@@ -1,3 +1,4 @@
+var db = require('./data-source');
 var mapFunction = function() {
 	var whiteWin = this.score.white > this.score.blue;
 	for(var position in this.table) {

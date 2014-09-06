@@ -8,29 +8,35 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
 	}
 
     var reloadTable = function() {
+        var players = $scope.model.players,
+            ratings = $scope.model.ratings['overall'];
         $scope.tableRows = [];
-        for (var playerIndex in $scope.model.players) {
-            var player = $scope.model.players[playerIndex],
-                playerId = player.uid,
-                playerStats = $scope.stats.players[playerId],
-                playerRatings = $scope.stats.ratings[playerId];
+        for (var i = 0; i < players.length; i++) {
+            var player = players[i],
+                playerUid = player.uid,
+                rating = ratings[playerUid];
 
+            if (!rating)
+                continue;
+            var gamesTotal = rating.bATotal + rating.bDTotal + rating.wATotal + rating.wDTotal,
+                winsTotal = rating.bAWins + rating.bDWins + rating.wAWins + rating.wDWins;
             var tableRow = {
                 name : player.name,
-                games : playerStats.games,
-                win : playerStats.win,
-                loss : playerStats.loss,
-                mean : playerRatings.mean,
-                sd : playerRatings.sd,
-                winPerc : (playerStats.win / (playerStats.games + 0.0001))*100,
-                winD : playerStats.winD + playerStats.winA,
-                lossD : playerStats.lossD + playerStats.lossA,
-                winA : playerStats.winC + playerStats.winB,
-                lossA : playerStats.lossC + playerStats.lossB,
-                winW : playerStats.winA + playerStats.winB,
-                lossW : playerStats.lossA + playerStats.lossB,
-                winB : playerStats.winC + playerStats.winD,
-                lossB : playerStats.lossC + playerStats.lossD
+                mean : rating.tsMean,
+                sd : rating.tsSd,
+                games: gamesTotal,
+                wins: winsTotal,
+                loss: gamesTotal - winsTotal,
+                winPerc : winsTotal / gamesTotal * 100,
+                winD: rating.wDWins + rating.bDWins,
+                lossD: rating.wDTotal - rating.wDWins + rating.bDTotal - rating.bDWins,
+                winA: rating.wAWins + rating.bAWins,
+                lossA: rating.wATotal - rating.wAWins + rating.bATotal - rating.bAWins,
+                winW : rating.wAWins + rating.wDWins,
+                lossW : rating.wATotal - rating.wAWins + rating.wDTotal - rating.wDWins,
+                winB : rating.bAWins + rating.bDWins,
+                lossB : rating.bATotal - rating.bAWins + rating.bDTotal - rating.bDWins,
+                greenBadges : rating.greenBadgesTotal
             }
             $scope.tableRows.push(tableRow);
 
