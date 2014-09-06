@@ -9,7 +9,6 @@ controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
 	}
 
     var reloadTable = function() {
-        console.log('asdasda');
         var players = $scope.model.players,
             ratings = $scope.model.ratings[$scope.selectedPeriod.uid];
         $scope.tableRows = [];

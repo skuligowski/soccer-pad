@@ -1,5 +1,4 @@
-var Players = require('./players'),
-    Ratings = require('./ratings'),
+var Ratings = require('./ratings'),
     db = require('./data-source'),
     Q = require('q');
 

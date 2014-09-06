@@ -3,7 +3,6 @@ var _ = require('lodash');
 var Q = require('q');
 var getDb = require('./db-queries').getDb;
 
-console.log('creating pool')
 var pool = mysql.createPool({
   dateStrings: false,
   connectionLimit: 5,
@@ -31,8 +30,6 @@ var getConnectionQuery = function(connection) {
 		var deferred = Q.defer(),
 			args = [].slice.call(arguments);
 		
-		console.log('SQL: [transaction] ' + args[0]);
-
 		args.push(resultCallback(connection, deferred));
 
 		connection.query.apply(connection, args);
@@ -44,8 +41,6 @@ var getPooledQuery = function() {
 	return function() {
 		var deferred = Q.defer(),
 			args = [].slice.call(arguments);
-
-		console.log('SQL: ' + args[0]);
 
 		args.push(function(err, result) {
 			if (err)
