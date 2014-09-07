@@ -1,0 +1,30 @@
+<div ng-controller="PlayersCtrl">
+
+	<form class="form-inline" role="form">
+		<div class="form-group">
+			<label class="sr-only" for="playerName">Player name</label>
+			<input type="text" ng-model="playerName" class="form-control" id="playerName" placeholder="Enter player name">
+		</div>
+		<button type="submit" class="btn btn-primary" ng-click="addPlayer()">Add player</button>
+	</form>
+	
+	<hr/>
+
+	<table class="table table-condensed table-hover">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Uid</th>
+				<th>Created</th>				
+				<th>Actions</th>
+			</tr>
+		</thead>
+  		<tr ng-repeat="player in model.players">
+  			<td>{{player.name}}</td>
+  			<td>{{player.uid}}</td>
+  			<td></td>
+  			<td><button class="btn btn-danger btn-xs">Remove</button></td>
+  		</tr>	
+	</table>
+
+</div>
