@@ -1,4 +1,4 @@
-<div ng-controller="PlayersCtrl">
+<div ng-controller="PlayersCtrl" class="players">
 
 	<form class="form-inline" role="form">
 		<div class="form-group">
@@ -19,11 +19,14 @@
 				<th>Actions</th>
 			</tr>
 		</thead>
-  		<tr ng-repeat="player in model.players">
+  		<tr ng-repeat="player in model.players" ng-class="{disabled: player.disabled}">
   			<td>{{player.name}}</td>
   			<td>{{player.uid}}</td>
   			<td></td>
-  			<td><button class="btn btn-danger btn-xs">Remove</button></td>
+  			<td>
+				<button ng-hide="player.disabled" class="btn btn-warning btn-xs" ng-click="disablePlayer(player.uid)">Disable</button>
+				<button ng-show="player.disabled" class="btn btn-success btn-xs" ng-click="activatePlayer(player.uid)">Activate</button>
+  			</td>
   		</tr>	
 	</table>
 

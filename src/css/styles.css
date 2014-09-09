@@ -2,6 +2,13 @@ html {
 	overflow-y: scroll; 
 }
 
+
+.players tr.disabled {
+	background: #f8f8f8;
+	color: #dedede;
+}
+
+
 .player-selector {
 	position: absolute;
 	font-size:30px;

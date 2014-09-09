@@ -1,10 +1,15 @@
 angular.module('views.table', [
 	'data.dataSource', 
 	'controls.playerSelector',
-	'controls.tabs'
+	'controls.tabs',
+	'filter.disabledPlayer'
 ]).
 
-controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
+controller('TableCtrl', ['$scope', 'dataSource', '$filter', function($scope, dataSource, $filter) {
+
+	$scope.$watch('model.players', function(players) {
+		$scope.players = $filter('disabledPlayerFilter')($scope.model.players);
+	});
 
 	var watchPosition = function(currentPlayer, position) {
 		$scope.$watch('table.'+position, function(newPlayer, oldPlayer) {
@@ -60,6 +65,5 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 	};
 
 	angular.forEach($scope.table, watchPosition);
-
 }]);
 

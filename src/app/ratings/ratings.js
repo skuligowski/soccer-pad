@@ -15,7 +15,7 @@ controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 playerUid = player.uid,
                 rating = ratings[playerUid];
 
-            if (!rating)
+            if (!rating || player.disabled)
                 continue;
             var gamesTotal = rating.bATotal + rating.bDTotal + rating.wATotal + rating.wDTotal,
                 winsTotal = rating.bAWins + rating.bDWins + rating.wAWins + rating.wDWins;

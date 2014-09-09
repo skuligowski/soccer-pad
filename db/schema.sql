@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS players;
 CREATE TABLE players (
 	uid VARCHAR(64) NOT NULL,
 	name VARCHAR(128),
+	status CHAR DEFAULT 'A' NOT NULL, -- D - disabled, R - removed, A - active
 PRIMARY KEY (uid)) ENGINE = InnoDB;
 
 
@@ -21,6 +22,7 @@ CREATE TABLE games (
 	whiteAttacker VARCHAR(64) NOT NULL,
 	blueScore INT NOT NULL,
 	whiteScore INT NOT NULL,
+	status CHAR DEFAULT 'A' NOT NULL, -- A - active, R - removed
 	date DATETIME,
 PRIMARY KEY (id)) ENGINE = InnoDB;
 

@@ -30,6 +30,14 @@ exports.getDb = function(query) {
 		findPlayers: function() {
 			return query('SELECT * FROM players');			
 		},
+		
+		addPlayer: function(player) {
+			return query('INSERT INTO players SET ?', player);
+		},
+
+		setPlayerStatus: function(playerUid, status) {
+			return query('UPDATE players SET status = ? WHERE uid = ?', [status, playerUid]);
+		},
 
 		findGames: function() {
 			return query('SELECT * FROM games ORDER BY date DESC');

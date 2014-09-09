@@ -31,8 +31,18 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 			$http.post('/api/players/add', {name: name}).success(function(data) {
 				model.players = data.players;
 				model.playersMapping = createPlayersMapping(data.players);
-				stats.players = data.stats.players;
-                stats.ratings = data.stats.ratings;
+			});
+		},
+		disablePlayer: function(playerUid) {
+			$http.post('/api/players/disable', {uid: playerUid}).success(function(data) {
+				model.playersMapping[playerUid].disabled = true;
+				model.players = [].concat(model.players);
+			});
+		},
+		activatePlayer: function(playerUid) {
+			$http.post('/api/players/activate', {uid: playerUid}).success(function(data) {
+				model.playersMapping[playerUid].disabled = false;
+				model.players = [].concat(model.players);
 			});
 		},
 		addGame: function(game) {

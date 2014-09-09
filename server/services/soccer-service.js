@@ -1,5 +1,7 @@
 var Ratings = require('./ratings'),
+    _ = require('lodash'),
     db = require('./data-source'),
+    playerConverter = require('./converters').playerConverter,
     Q = require('q');
 
 exports.init = function(server) {
@@ -8,7 +10,7 @@ exports.init = function(server) {
         Q.all([db.findPlayers(), db.findGames(), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
         spread(function(players, games, periods, ratings) {
             res.send({
-                players: players,
+                players: _.map(players, playerConverter),
                 games: games,
                 periods: periods,
                 ratings: ratings
@@ -65,5 +67,35 @@ exports.init = function(server) {
             });
         });
 	});
+
+    server.post('/api/players/disable', function(req, res) {
+        var player = req.body;
+        db.setPlayerStatus(player.uid, 'D').then(function() {
+            res.send({});
+        });
+    });
+
+    server.post('/api/players/activate', function(req, res) {
+        var player = req.body;
+        db.setPlayerStatus(player.uid, 'A').then(function() {
+            res.send({});
+        });
+    });
+
+    server.post('/api/players/add', function(req, res) {
+        var player = req.body;
+        db.addPlayer({
+            uid: player.name.toLowerCase().replace(/ /, ""),
+            name: player.name,
+            status: 'A'
+        }).then(function() {
+            return db.findPlayers();
+        }).then(function(players) {
+            res.send({
+                players: _.map(players, playerConverter)
+            });
+        });
+    });
+
 }
 

@@ -1,17 +1,17 @@
 DELETE FROM players;
 
-INSERT INTO players VALUES ('beti', 'Beti');
-INSERT INTO players VALUES ('diego', 'Diego');
-INSERT INTO players VALUES ('damiang', 'Damian G.');
-INSERT INTO players VALUES ('mariusz', 'Mariusz');
-INSERT INTO players VALUES ('damianj', 'Damian J.');
-INSERT INTO players VALUES ('ela', 'Ela');
-INSERT INTO players VALUES ('aga', 'Aga');
-INSERT INTO players VALUES ('seba', 'Seba');
-INSERT INTO players VALUES ('tomek', 'Tomek');
-INSERT INTO players VALUES ('michal', 'Michał');
-INSERT INTO players VALUES ('filip', 'Filip');
-INSERT INTO players VALUES ('wojtek', 'Wojtek');
+INSERT INTO players (uid, name) VALUES ('beti', 'Beti');
+INSERT INTO players (uid, name) VALUES ('diego', 'Diego');
+INSERT INTO players (uid, name) VALUES ('damiang', 'Damian G.');
+INSERT INTO players (uid, name) VALUES ('mariusz', 'Mariusz');
+INSERT INTO players (uid, name) VALUES ('damianj', 'Damian J.');
+INSERT INTO players (uid, name) VALUES ('ela', 'Ela');
+INSERT INTO players (uid, name) VALUES ('aga', 'Aga');
+INSERT INTO players (uid, name) VALUES ('seba', 'Seba');
+INSERT INTO players (uid, name) VALUES ('tomek', 'Tomek');
+INSERT INTO players (uid, name) VALUES ('michal', 'Michał');
+INSERT INTO players (uid, name) VALUES ('filip', 'Filip');
+INSERT INTO players (uid, name) VALUES ('wojtek', 'Wojtek');
 
 
 DELETE FROM games;
