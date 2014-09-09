@@ -51,6 +51,11 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 				model.games = model.games.concat([]);
 				model.ratings = data.ratings;
 			});
-		} 
+		},
+		recalculateRatings: function() {
+			$http.post('/api/ratings/recalculate').success(function(data) {
+				model.ratings = data.ratings;
+			});			
+		}
 	}
 }]);

@@ -25,7 +25,7 @@ exports.init = function(server) {
         });           
     }
     
-    server.get('/api/ratings/recalculate', function(req, res) {
+    server.post('/api/ratings/recalculate', function(req, res) {
         db.begin(function(db) {
             Q.all([db.findAllRatingPeriods(), db.clearRatings()]).
             spread(function(periods) {
@@ -34,8 +34,12 @@ exports.init = function(server) {
                     updateActions.push(updateRatingsForPeriod(db, periods[i].uid));
                 return Q.all(updateActions);
             }).then(function() {
+                return db.findAllRatingsMap();
+            }).then(function(ratings) {
                 db.commit();
-                res.send({});
+                res.send({
+                    ratings: ratings
+                });
             });
         });
 

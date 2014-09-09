@@ -1,4 +1,4 @@
-angular.module('views.players', ['data.dataSource','controls.sortable']).
+angular.module('views.settings.players', ['data.dataSource','controls.sortable']).
 
 controller('PlayersCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 

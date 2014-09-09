@@ -1,5 +1,6 @@
 angular.module('views.settings', [
-	'views.players',
+	'views.settings.players',
+	'views.settings.options',
 	'data.dataSource',
 	'controls.sortable',
 	'controls.selectableList'
