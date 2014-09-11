@@ -5,7 +5,7 @@ var getDb = require('./db-queries').getDb;
 
 var pool = mysql.createPool({
   dateStrings: false,
-  connectionLimit: 5,
+  connectionLimit: 10,
   host: 'localhost',
   database: 'soccer_pad',
   user: 'root',
@@ -14,14 +14,13 @@ var pool = mysql.createPool({
 
 var resultCallback = function(connection, deferred) {
 	return function(err, result) {
-		if (err) {
-			connection.rollback(function() {
-				console.log(err);		
-				connection.release();		
-			})
+		if (!err)
+			return deferred.resolve(result);
+
+		connection.rollback(function() {
+			connection.release();
 			return deferred.reject(err);
-		}
-		return deferred.resolve(result);
+		})
 	};
 }
 

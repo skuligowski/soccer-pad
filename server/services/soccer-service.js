@@ -98,6 +98,8 @@ exports.init = function(server) {
             res.send({
                 players: _.map(players, playerConverter)
             });
+        }).catch(function(err) {
+            res.send(400);
         });
     });
 
