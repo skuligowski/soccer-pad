@@ -27,12 +27,14 @@ exports.init = function(server) {
     
     server.post('/api/ratings/recalculate', function(req, res) {
         db.begin(function(db) {
-            Q.all([db.findAllRatingPeriods(), db.clearRatings()]).
-            spread(function(periods) {
-                var updateActions = [];
-                for(var i = 0; i < periods.length; i++)
-                    updateActions.push(updateRatingsForPeriod(db, periods[i].uid));
-                return Q.all(updateActions);
+            db.generateRatingPeriods().then(function() {
+                return Q.all([db.findAllRatingPeriods(), db.clearRatings()]).
+                spread(function(periods) {
+                    var updateActions = [];
+                    for(var i = 0; i < periods.length; i++)
+                        updateActions.push(updateRatingsForPeriod(db, periods[i].uid));
+                    return Q.all(updateActions);
+                });
             }).then(function() {
                 return db.findAllRatingsMap();
             }).then(function(ratings) {
@@ -42,7 +44,6 @@ exports.init = function(server) {
                 });
             });
         });
-
     });
 
 	server.post('/api/games/add', function(req, res) {

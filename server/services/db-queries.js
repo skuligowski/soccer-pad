@@ -86,6 +86,19 @@ exports.getDb = function(query) {
 
 		clearRatings: function() {
 			return query('DELETE FROM ratings');
+		},
+
+		generateRatingPeriods: function() {
+			return query("DELETE FROM rating_periods WHERE uid != 'overall'").then(function() {
+				return query("INSERT INTO rating_periods " +
+					"SELECT uid, title, fromDate, fromDate + INTERVAL 1 MONTH - INTERVAL 1 SECOND toDate FROM ( " +
+						"SELECT " +
+							"DATE_FORMAT(date, '%Y%m') uid, " +
+							"DATE_FORMAT(date, 'Month: %Y-%m') title, " +
+							"DATE_FORMAT(date, '%Y-%m-01 00:00:00') fromDate " +
+						"FROM games GROUP BY YEAR(date), MONTH(date) " +
+					") fd");
+			})
 		}
 	}
 }
