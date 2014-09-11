@@ -1,15 +1,6 @@
 var _ = require('lodash');
 var Q = require('q');
 
-var valuesOf = function(key) {
-	return function(objects) {
-		var arr = [];
-		for(var i = 0; i < objects.length; i++)
-			arr[i] = objects[i][key];
-		return arr;
-	}
-}
-
 var toRatingsMap = function(ratings) {
 	var map = {};
 	for(var i = 0; i < ratings.length; i++) {
@@ -21,8 +12,6 @@ var toRatingsMap = function(ratings) {
 	}
 	return map;
 }
-
-var uidFlatValues = valuesOf('uid');
 
 exports.getDb = function(query) {
 	return {

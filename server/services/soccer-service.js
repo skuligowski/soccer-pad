@@ -56,7 +56,7 @@ exports.init = function(server) {
             }).then(function() {
                 return db.findRatingPeriods(game.date);
             }).then(function(periods) {
-                db.findPlayersRatingsMap(_.map(periods, 'uid')).then(function(ratings) {
+                return db.findPlayersRatingsMap(_.map(periods, 'uid')).then(function(ratings) {
                     var replaceActions = [];
                     for(var i = 0; i < periods.length; i++) {                    
                         var periodUid = periods[i].uid,
@@ -64,16 +64,16 @@ exports.init = function(server) {
                         replaceActions.push(db.replacePlayersRatings(periodUid, newRatings));
                     }
                     return Q.all(replaceActions);
-                }).then(function() {
-                    return db.findAllRatingsMap();                    
-                }).then(function(ratings) {
-                    res.send({
-                        game: game,
-                        ratings: ratings,
-                        periods: periods
-                    });
-                    db.commit();
                 });
+            }).then(function() {
+                return Q.all([db.findAllRatingPeriods(), db.findAllRatingsMap()]);
+            }).spread(function(periods, ratings) {
+                res.send({
+                    game: game,
+                    ratings: ratings,
+                    periods: periods
+                });
+                db.commit();
             });
         });
 	});

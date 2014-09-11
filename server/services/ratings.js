@@ -33,7 +33,6 @@ var defaultGameInfo = new jst.GameInfo.getDefaultGameInfo(),
     };
 
 exports.calculate = function(games, lastRatingsMap) {  
-    console.log(lastRatingsMap);
     var players = {},
         ratings = {},
         lastRatingsMap = lastRatingsMap || {},
