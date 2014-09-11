@@ -50,11 +50,13 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 				model.games.splice(0, 0, data.game);
 				model.games = model.games.concat([]);
 				model.ratings = data.ratings;
+				model.periods = data.periods;
 			});
 		},
 		recalculateRatings: function() {
 			$http.post('/api/ratings/recalculate').success(function(data) {
 				model.ratings = data.ratings;
+				model.periods = data.periods;
 			});			
 		}
 	}

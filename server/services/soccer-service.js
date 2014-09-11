@@ -27,21 +27,23 @@ exports.init = function(server) {
     
     server.post('/api/ratings/recalculate', function(req, res) {
         db.begin(function(db) {
-            db.generateRatingPeriods().then(function() {
-                return Q.all([db.findAllRatingPeriods(), db.clearRatings()]).
-                spread(function(periods) {
-                    var updateActions = [];
-                    for(var i = 0; i < periods.length; i++)
-                        updateActions.push(updateRatingsForPeriod(db, periods[i].uid));
-                    return Q.all(updateActions);
-                });
+            var result = {};
+            db.clearRatings().then(function() {
+                return db.generateMonthlyPeriods();
+            }).then(function() {
+                return db.findAllRatingPeriods();
+            }).then(function(periods) {
+                result.periods = periods;
+                var updateActions = [];
+                for(var i = 0; i < periods.length; i++)
+                    updateActions.push(updateRatingsForPeriod(db, periods[i].uid));
+                return Q.all(updateActions);
             }).then(function() {
                 return db.findAllRatingsMap();
             }).then(function(ratings) {
                 db.commit();
-                res.send({
-                    ratings: ratings
-                });
+                result.ratings = ratings;
+                res.send(result);
             });
         });
     });
@@ -50,12 +52,14 @@ exports.init = function(server) {
 		var game = req.body;
         db.begin(function(db) {
             db.insertGame(game).then(function(game) {
+                return db.createMonthlyPeriod(game.date);                
+            }).then(function() {
                 return db.findRatingPeriods(game.date);
             }).then(function(periods) {
-                db.findPlayersRatingsMap(periods).then(function(ratings) {
+                db.findPlayersRatingsMap(_.map(periods, 'uid')).then(function(ratings) {
                     var replaceActions = [];
                     for(var i = 0; i < periods.length; i++) {                    
-                        var periodUid = periods[i],
+                        var periodUid = periods[i].uid,
                             newRatings = Ratings.calculate([game], ratings[periodUid]);
                         replaceActions.push(db.replacePlayersRatings(periodUid, newRatings));
                     }
@@ -65,7 +69,8 @@ exports.init = function(server) {
                 }).then(function(ratings) {
                     res.send({
                         game: game,
-                        ratings: ratings
+                        ratings: ratings,
+                        periods: periods
                     });
                     db.commit();
                 });

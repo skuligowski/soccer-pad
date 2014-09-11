@@ -2,12 +2,14 @@ angular.module('views.ratings', ['data.dataSource', 'controls.sortable']).
 
 controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 
-    $scope.selectedPeriod = $scope.model.periods[0];
-
     var reloadTable = function() {
         var players = $scope.model.players,
-            ratings = $scope.model.ratings[$scope.selectedPeriod.uid];
+            selectedPeriod = $scope.selectedPeriod = $scope.selectedPeriod || $scope.model.periods[0],
+            ratings = $scope.model.ratings[selectedPeriod.uid];
         
+        if (!ratings)
+            return;
+
         $scope.tableRows = [];
         
         for (var i = 0; i < players.length; i++) {

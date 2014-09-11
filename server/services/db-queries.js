@@ -57,8 +57,7 @@ exports.getDb = function(query) {
 
 		findRatingPeriods: function(gameDate) {
 			gameDate.setMilliseconds(0);
-			return query('SELECT p.uid FROM rating_periods p WHERE ? BETWEEN p.fromDate AND p.toDate', gameDate).
-				then(uidFlatValues);
+			return query('SELECT * FROM rating_periods p WHERE ? BETWEEN p.fromDate AND p.toDate ORDER BY p.toDate DESC', gameDate);
 		},
 
 		findAllRatingPeriods: function() {
@@ -88,7 +87,15 @@ exports.getDb = function(query) {
 			return query('DELETE FROM ratings');
 		},
 
-		generateRatingPeriods: function() {
+		createMonthlyPeriod: function(date) {
+			return query("INSERT IGNORE INTO rating_periods VALUES (" +
+				"DATE_FORMAT(?, '%Y%m'), " +
+				"DATE_FORMAT(?, 'Month: %Y-%m'), " +
+				"DATE_FORMAT(?, '%Y-%m-01 00:00:00'), " +
+				"DATE_FORMAT(?, '%Y-%m-01 00:00:00') + INTERVAL 1 MONTH - INTERVAL 1 SECOND)", [date, date, date, date]);
+		},
+
+		generateMonthlyPeriods: function() {
 			return query("DELETE FROM rating_periods WHERE uid != 'overall'").then(function() {
 				return query("INSERT INTO rating_periods " +
 					"SELECT uid, title, fromDate, fromDate + INTERVAL 1 MONTH - INTERVAL 1 SECOND toDate FROM ( " +
