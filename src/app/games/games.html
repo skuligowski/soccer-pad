@@ -11,6 +11,7 @@
 				<th></th>
 				<th>Score</th>
 				<th>Label</th>
+				<th style="text-align: right"></th>
 			</tr>
 		</thead>
 		<tr ng-repeat="game in paged.games" >
@@ -22,9 +23,12 @@
 			<td class="col-xs-1">{{model.playersMapping[game.blueAttacker].name}}</td>
 			<td class="col-xs-1"></td>
 			<td class="col-xs-1">{{game.whiteScore}} : {{game.blueScore}}</td>
-			<td class="col-xs-2">
+			<td class="col-xs-1">
 				<span class="label label-info" ng-show="game.new">New</span>
-				<span class="label label-success" ng-show="!game.whiteScore || !game.blueScore">{{game.whiteScore}} : {{game.blueScore}}</span>
+				<span class="label label-success" ng-show="!game.whiteScore || !game.blueScore">{{game.whiteScore}} : {{game.blueScore}}</span>				
+			</td>
+			<td class="col-xs-1" style="text-align: right">
+				<a href="#" ng-show="game.removable"><span class="glyphicon glyphicon-remove"></span></a>
 			</td>
 		</tr>
 	</table>

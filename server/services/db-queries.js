@@ -40,6 +40,7 @@ exports.getDb = function(query) {
 			game.date = new Date();
 			return query('INSERT INTO games SET ?', game).then(function(insert) {
 				game.id = insert.insertId;
+				game.new = true;
 				return game;
 			});
 		},

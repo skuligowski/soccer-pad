@@ -2,6 +2,7 @@ var Ratings = require('./ratings'),
     _ = require('lodash'),
     db = require('./data-source'),
     playerConverter = require('./converters').playerConverter,
+    gameConverter = require('./converters').gameConverter,
     Q = require('q');
 
 exports.init = function(server) {
@@ -10,8 +11,8 @@ exports.init = function(server) {
         Q.all([db.findPlayers(), db.findGames(), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
         spread(function(players, games, periods, ratings) {
             res.send({
-                players: _.map(players, playerConverter),
-                games: games,
+                players: _.map(players, playerConverter()),
+                games: _.map(games, gameConverter()),
                 periods: periods,
                 ratings: ratings
             });
@@ -69,7 +70,7 @@ exports.init = function(server) {
                 return Q.all([db.findAllRatingPeriods(), db.findAllRatingsMap()]);
             }).spread(function(periods, ratings) {
                 res.send({
-                    game: game,
+                    game: gameConverter()(game),
                     ratings: ratings,
                     periods: periods
                 });
@@ -102,7 +103,7 @@ exports.init = function(server) {
             return db.findPlayers();
         }).then(function(players) {
             res.send({
-                players: _.map(players, playerConverter)
+                players: _.map(players, playerConverter())
             });
         }).catch(function(err) {
             res.send(400);
