@@ -45,6 +45,16 @@ exports.getDb = function(query) {
 			});
 		},
 
+		findGame: function(id) {
+			return query('SELECT * FROM games WHERE id = ?', id).then(function(games) {
+				return games[0];
+			});
+		},
+
+		removeGame: function(id) {
+			return query('DELETE FROM games WHERE id = ?', id);
+		},
+
 		findRatingPeriods: function(gameDate) {
 			gameDate.setMilliseconds(0);
 			return query('SELECT * FROM rating_periods p WHERE ? BETWEEN p.fromDate AND p.toDate ORDER BY p.toDate DESC', gameDate);

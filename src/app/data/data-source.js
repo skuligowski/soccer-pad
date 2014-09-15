@@ -53,6 +53,16 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 				model.periods = data.periods;
 			});
 		},
+		deleteGame: function(gameId) {
+			$http.post('/api/games/delete/' + gameId).success(function(data) {
+				for(var i = 0; i < model.games.length; i++) {
+					if (model.games[i].id === gameId)
+						model.games.splice(i, 1);
+				}
+				model.games = [].concat(model.games);
+				model.ratings = data.ratings;
+			});
+		},
 		recalculateRatings: function() {
 			$http.post('/api/ratings/recalculate').success(function(data) {
 				model.ratings = data.ratings;
