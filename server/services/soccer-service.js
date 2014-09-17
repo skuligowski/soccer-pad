@@ -8,7 +8,7 @@ var Ratings = require('./ratings'),
 exports.init = function(server) {
 
     server.get('/api/init', function(req, res) {        
-        Q.all([db.findPlayers(), db.findGames(), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
+        Q.all([db.findPlayers(), db.findGames(20), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
         spread(function(players, games, periods, ratings) {
             res.send({
                 players: _.map(players, playerConverter()),

@@ -28,8 +28,8 @@ exports.getDb = function(query) {
 			return query('UPDATE players SET status = ? WHERE uid = ?', [status, playerUid]);
 		},
 
-		findGames: function() {
-			return query('SELECT * FROM games ORDER BY date DESC');
+		findGames: function(limit) {
+			return query('SELECT * FROM games ORDER BY date DESC LIMIT 0, ?', limit);
 		},
 
 		findGamesForRatingPeriod: function(periodUid) {

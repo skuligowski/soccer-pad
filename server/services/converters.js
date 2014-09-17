@@ -14,9 +14,16 @@ exports.playerConverter = function() {
 }
 
 exports.gameConverter = function() {
+	var today = new Date();
+	today.setHours(0);
+	today.setMinutes(0);
+	today.setSeconds(0);
+	var todayTime = today.getTime();	
 	var removableTime = new Date().getTime() - 5*60*1000; // 5 minutes removable time
 	return function(game) {
-		game.removable = game.date.getTime() > removableTime;
+		var gameDateTime = game.date.getTime();
+		game.removable = gameDateTime > removableTime;
+		game.today = gameDateTime > todayTime;
 		return game;
 	}
 }

@@ -65,6 +65,17 @@ html {
 	margin-top: 14px;
 }
 
+.game-date .date {
+	font-weight: bold;
+}
+
+.game-date .time {
+	margin-left: 5px;
+	font-size: 9px;
+}
+
+
+
 .view-animate {
 }
  

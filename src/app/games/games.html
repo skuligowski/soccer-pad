@@ -14,8 +14,8 @@
 				<th style="text-align: right"></th>
 			</tr>
 		</thead>
-		<tr ng-repeat="game in paged.games" >
-			<td class="col-xs-3">{{game.date}}</td>
+		<tr ng-repeat="game in model.games" ng-class="{today: game.today}">
+			<td class="col-xs-3"><span class="label label-warning" ng-show="game.today" style="margin-right: 10px">Today</span><div game-date="{{game.date}}"></div></td>
 			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.whiteDefender].name}}</td>
 			<td class="col-xs-1">{{model.playersMapping[game.whiteAttacker].name}}</td>
 			<td class="col-xs-1"></td>
@@ -32,5 +32,4 @@
 			</td>
 		</tr>
 	</table>
-	<div pager source="model.games" out="paged.games" page-size="10" buttons="5"></div>
 </div>

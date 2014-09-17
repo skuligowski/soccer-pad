@@ -1,4 +1,4 @@
-angular.module('views.games', ['controls.pager']).
+angular.module('views.games', ['controls.pager', 'control.gameDate']).
 
 controller('GamesCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 	$scope.deleteGame = function(gameId) {
