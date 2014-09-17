@@ -71,6 +71,8 @@ exports.calculate = function(games, lastRatingsMap) {
         
         var ratingsMap = trueSkillCalculator.calculateNewRatings(defaultGameInfo, [blueTeam, whiteTeam], rankArray);
         _.forEach(ratingsMap, function(calculatedRating, playerUid) {
+            var meanChange =  calculatedRating.mean - players[playerUid].jstRating.mean;
+            calculatedRating.meanChange = meanChange;
             players[playerUid].jstRating = calculatedRating;
         });
 
@@ -84,7 +86,8 @@ exports.calculate = function(games, lastRatingsMap) {
         return _.assign({
             playerUid: playerUid,
             tsMean: player.jstRating.mean,
-            tsSd: player.jstRating.standardDeviation,            
+            tsSd: player.jstRating.standardDeviation,
+            tsMeanChange: player.jstRating.meanChange
         }, player.ratings);
     });
 }

@@ -18,8 +18,10 @@ exports.gameConverter = function() {
 	today.setHours(0);
 	today.setMinutes(0);
 	today.setSeconds(0);
-	var todayTime = today.getTime();	
-	var removableTime = new Date().getTime() - 5*60*1000; // 5 minutes removable time
+	
+	var todayTime = today.getTime(),	
+		removableTime = new Date().getTime() - 5*60*1000; // 5 minutes removable time
+	
 	return function(game) {
 		var gameDateTime = game.date.getTime();
 		game.removable = gameDateTime > removableTime;

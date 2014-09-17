@@ -75,6 +75,41 @@ html {
 }
 
 
+.rating {
+	font-weight: bold;
+}
+
+.rating .sd {
+	font-weight: normal;
+	font-size: 11px; 
+	color: #999
+}
+
+.rating-change {
+	position: relative;
+}
+
+.rating-change .glyphicon {
+	position: absolute;
+	font-size: 10px;
+}
+
+.rating-change .glyphicon.glyphicon-chevron-down,
+.rating-change .glyphicon.glyphicon-chevron-up  {
+	top: 13px;
+}
+
+.rating-change .value {
+	margin-left: 10px;
+}
+
+.rating-change.increase {
+	color: green;
+}
+
+.rating-change.decrease {
+	color: red;
+}
 
 .view-animate {
 }

@@ -4,13 +4,14 @@
 		<thead>
 			<tr>
 				<th rowspan="2">Name</th>
-				<th colspan="5">
+				<th colspan="2">
 					<ul bts-combo ng-model="selectedPeriod">
 						<li ng-repeat="period in model.periods" bts-combo-item="period" bts-combo-label="period.title">
 							<a tabindex="-1" href="#">{{period.title}}</a>
 						</li>
 					</ul>
 				</th>
+				<th colspan="2">RATING</th>
 				<th colspan="2">DEFENDER</th>
 				<th colspan="2">ATTACKER</th>
     			<th colspan="2" class="white">WHITE</th>
@@ -20,14 +21,13 @@
 			<tr>
 
 				<th sortable="playerSort" column="games">Games</th>
-				<th sortable="playerSort" column="wins">Win</th>
-				<th sortable="playerSort" column="loss">Loss</th>
-				<th sortable="playerSort" column="mean">Rating</th>
 				<th sortable="playerSort" column="winPerc" style="width:120px">% of wins</th>
+				<th sortable="playerSort" column="mean">Rating</th>
+				<th sortable="playerSort" column="change" style="width:120px">Change</th>
 				<th sortable="playerSort" column="winD">Win</th>
 				<th sortable="playerSort" column="lossD">Loss</th>
 				<th sortable="playerSort" column="winA">Win</th>
-				<th sortable="playerSort" column="lossA" style="width:120px">Loss</th>
+				<th sortable="playerSort" column="lossA" style="width:100px">Loss</th>
 				<th sortable="playerSort" column="winW">Win</th>
 				<th sortable="playerSort" column="lossW">Loss</th>
 				<th sortable="playerSort" column="winB">Win</th>
@@ -38,10 +38,12 @@
 		<tr ng-repeat="tableRow in tableRows | orderBy:playerSort.column:playerSort.descending">
 			<td>{{tableRow.name}}</td>
 			<td>{{tableRow.games}}</td>
-			<td>{{tableRow.wins}}</td>
-			<td>{{tableRow.loss}}</td>
-			<td>{{tableRow.mean.toFixed(2)}} ± {{tableRow.sd.toFixed(2)}}</td>
 			<td>{{tableRow.winPerc.toFixed(0)}}%</td>
+			<td class="rating">{{tableRow.mean.toFixed(2)}} <span class="sd">± {{tableRow.sd.toFixed(2)}}</span></td>
+			<td class="rating-change" ng-class="{decrease: !tableRow.meanUp, increase: tableRow.meanUp}">
+				<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !tableRow.meanUp, 'glyphicon-chevron-up': tableRow.meanUp}"></span>
+				<span class="value">{{tableRow.change.toFixed(2)}}</span>
+			</td>
 			<td>{{tableRow.winD}}</td>
 			<td>{{tableRow.lossD}}</td>
 			<td>{{tableRow.winA}}</td>

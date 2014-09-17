@@ -31,8 +31,8 @@ INSERT INTO rating_periods (uid, title, fromDate, toDate)
 
 DELETE FROM ratings;
 
-INSERT INTO ratings (periodUid, playerUid, tsMean, tsSd) 
-	VALUES('201409', 'aga', 3, 7);
+INSERT INTO ratings (periodUid, playerUid, tsMean, tsSd, tsMeanChange) 
+	VALUES('201409', 'aga', 3, 7, 0);
 
 /*INSERT INTO games (blueDefender, blueAttacker, whiteDefender, whiteAttacker, blueScore, whiteScore, gameDate)
 	VALUES('beti', 'aga', 'wojtek', 'filip', 1, 10, NOW() - INTERVAL 10 DAY);

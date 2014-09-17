@@ -25,6 +25,8 @@ controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 name : player.name,
                 mean : rating.tsMean,
                 sd : rating.tsSd,
+                change : Math.abs(rating.tsMeanChange),
+                meanUp: rating.tsMeanChange >= 0,
                 games: gamesTotal,
                 wins: winsTotal,
                 loss: gamesTotal - winsTotal,
