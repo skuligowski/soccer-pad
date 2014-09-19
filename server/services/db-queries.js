@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var Q = require('q');
+var dataSource = require('./data-source');
 
 var toRatingsMap = function(ratings) {
 	var map = {};
@@ -13,9 +14,8 @@ var toRatingsMap = function(ratings) {
 	return map;
 }
 
-exports.getDb = function(query) {
+var db = function(query) {
 	return {
-
 		findPlayers: function() {
 			return query('SELECT * FROM players');			
 		},
@@ -109,3 +109,5 @@ exports.getDb = function(query) {
 		}
 	}
 }
+
+module.exports = dataSource(db);

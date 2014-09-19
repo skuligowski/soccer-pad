@@ -1,7 +1,6 @@
 var mysql = require('mysql');
 var _ = require('lodash');
 var Q = require('q');
-var getDb = require('./db-queries').getDb;
 
 var pool = mysql.createPool({
   dateStrings: false,
@@ -12,75 +11,103 @@ var pool = mysql.createPool({
   password: ''
 });
 
-var resultCallback = function(connection, deferred) {
-	return function(err, result) {
-		if (!err)
-			return deferred.resolve(result);
+module.exports = function() {
+	
+	var getDbFnList = [].slice.call(arguments),
+		getDb = function(query) {
+			var dbList = _.map(getDbFnList, function(getDbFn) {
+				return getDbFn(query);
+			});
+			return _.assign.apply(_, dbList);
+		};
 
-		connection.rollback(function() {
-			connection.release();
-			return deferred.reject(err);
-		})
-	};
-}
+	var resultCallback = function(connection, deferred) {
+		return function(err, result) {
+			if (!err)
+				return deferred.resolve(result);
 
-var getConnectionQuery = function(connection) {
-	return function() {
-		var deferred = Q.defer(),
-			args = [].slice.call(arguments);
-		
-		console.log(args[0])
-		args.push(resultCallback(connection, deferred));
-
-		connection.query.apply(connection, args);
-		return deferred.promise;
+			connection.rollback(function() {
+				connection.release();
+				return deferred.reject(err);
+			})
+		};
 	}
-}
 
-var getPooledQuery = function() {
-	return function() {
-		var deferred = Q.defer(),
-			args = [].slice.call(arguments);
-		console.log(args[0])
-		args.push(function(err, result) {
-			if (err)
-				console.log(err);
-			return err ? deferred.reject(err) : deferred.resolve(result);
-		});
+	var getConnectionQuery = function(connection) {
+		return function() {
+			var deferred = Q.defer(),
+				args = [].slice.call(arguments);
+			
+			console.log('t:'+args[0])
+			args.push(resultCallback(connection, deferred));
 
-		pool.query.apply(pool, args);
-		return deferred.promise;
+			connection.query.apply(connection, args);
+			return deferred.promise;
+		}
 	}
-}
 
-var begin = function(callback) {
-	pool.getConnection(function(err, connection) {
-		if (err) throw err;
-		
-		connection.beginTransaction(function(err) {
-  			if (err) throw err;
-		
-			var db = getDb(getConnectionQuery(connection));
-			db.commit = function() {
-				connection.commit(function(err) {
-					if (err) { 
-						connection.rollback(function() {
+	var getPooledQuery = function() {
+		return function() {
+			var deferred = Q.defer(),
+				args = [].slice.call(arguments);
+			console.log('c:'+args[0])
+			args.push(function(err, result) {
+				return err ? deferred.reject(err) : deferred.resolve(result);
+			});
+
+			pool.query.apply(pool, args);
+			return deferred.promise;
+		}
+	}
+
+	var destroy = function() {
+		pool.end();
+	}
+
+	var begin = function(callback) {
+		var deferred = Q.defer();
+		pool.getConnection(function(err, connection) {
+			if (err) 
+				return deferred.reject(err);
+			
+			connection.beginTransaction(function(err) {
+	  			if (err) 
+	  				return deferred.reject(err);
+			
+				var db = getDb(getConnectionQuery(connection));
+				
+				db.commit = function() {
+					var deferred = Q.defer();
+					connection.commit(function(err) {
+						if (err) { 
+							connection.rollback(function() {
+								connection.release();
+								deferred.reject();
+							});
+						} else {
 							connection.release();
-						});
-					} else {
+							deferred.resolve();
+						}					
+					});
+					return deferred.promise;
+				}
+				
+				db.rollback = function() {
+					var deferred = Q.defer();
+					connection.rollback(function() {
 						connection.release();
-					}					
-				});
-			}
-			db.rollback = function() {
-				connection.rollback(function() {
-					connection.release();					
-				});				
-			}
-			callback(db);
+						deferred.resolve();					
+					});
+					return deferred.promise;
+				}
+				
+				db.destroy = destroy;
+				
+				deferred.resolve(db);
+			});
 		});
-	});	
-}
+		return deferred.promise;
+	}
 
-exports.begin = begin;
-_.assign(exports, getDb(getPooledQuery()));
+	return _.assign({ begin: begin, destroy: destroy }, getDb(getPooledQuery()));
+}
