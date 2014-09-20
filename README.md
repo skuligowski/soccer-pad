@@ -10,7 +10,7 @@ Our goal is to create a simple way of adding soccer scores. The way that doesn't
 ### Getting started
 
 1. Install *mysql* database ([http://dev.mysql.com/downloads/mysql/](http://dev.mysql.com/downloads/mysql/))
-2. Install nodejs [http://nodejs.org/download/](http://nodejs.org/download/)
+2. Install *nodejs* ([http://nodejs.org/download/](http://nodejs.org/download/))
 3. Fork the project on GitHub
 4. Clone the project: `git clone git@github.com:<github username>/soccer-pad.git`
 5. Go to the *Soccer Pad* directory: `cd soccer-pad`
@@ -29,4 +29,8 @@ Our goal is to create a simple way of adding soccer scores. The way that doesn't
 3. Run the server: `node server`
 4. Open a browser and go to: `http://localhost:8000/index.html`
 5. Click *Players* tab and add several players
+
+## *Trueskill(TM)* ratings
+
+The Soccer Pad uses TrueSkill(TM) alghorithm (http://research.microsoft.com/en-us/projects/trueskill/) to calculate ratings for all players. The rating system has been used on XBOX Live platform to rank users. It was developed by Microsoft Research.
 
