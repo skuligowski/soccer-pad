@@ -9,15 +9,17 @@ Our goal is to create a simple way of adding soccer scores. The way that doesn't
 
 ### Getting started
 
-1. Install *mongodb* ([http://docs.mongodb.org/manual/installation/](http://docs.mongodb.org/manual/installation/))
-2. Start *mongodb* by typing `mongod` (on Windows make sure you've set up the path to the data files)
+1. Install *mysql* database ([http://dev.mysql.com/downloads/mysql/](http://dev.mysql.com/downloads/mysql/))
 2. Install nodejs [http://nodejs.org/download/](http://nodejs.org/download/)
 3. Fork the project on GitHub
 4. Clone the project: `git clone git@github.com:<github username>/soccer-pad.git`
 5. Go to the *Soccer Pad* directory: `cd soccer-pad`
 6. Add the main *Soccer Pad* repository as an upstream remote to your repository:
 `git remote add upstream https://github.com/kuligowski/soccer-pad.git`
-7. Go to the *server* directory: `cd server`
+7. Go to the *db* directory: `cd db`
+8. Log as root to the *mysql* database and type `source schema.sql` - it will create soccer pads database schema
+9. Type `source data.sql` to add example data to the database
+8. Exit *mysql* and go to the *server* directory: `cd server`
 8. Install *node.js* dependencies: `npm install`
 
 ### Running *Soccer Pad*
