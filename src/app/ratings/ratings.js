@@ -23,8 +23,7 @@ controller('RatingsCtrl', ['$scope', 'dataSource', function($scope, dataSource) 
                 winsTotal = rating.bAWins + rating.bDWins + rating.wAWins + rating.wDWins;
             var tableRow = {
                 name : player.name,
-                mean : rating.tsMean,
-                sd : rating.tsSd,
+                mean : rating.tsMean - 3*rating.tsSd,
                 change : Math.abs(rating.tsMeanChange),
                 meanUp: rating.tsMeanChange >= 0,
                 games: gamesTotal,

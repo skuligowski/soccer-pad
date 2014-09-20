@@ -43,10 +43,10 @@ readFile('playersx.json')
 	return readFile('gamesx.json').then(function(games) {
 		return _.map(games, function(game) {
 			return {
-				blueDefender: playersMap[game.table.A].uid,
-				blueAttacker: playersMap[game.table.B].uid,
-				whiteDefender: playersMap[game.table.C].uid,
-				whiteAttacker: playersMap[game.table.D].uid,
+				blueAttacker: playersMap[game.table.C].uid,
+				blueDefender: playersMap[game.table.D].uid,
+				whiteAttacker: playersMap[game.table.B].uid,
+				whiteDefender: playersMap[game.table.A].uid,
 				blueScore: game.score.blue,
 				whiteScore: game.score.white,
 				date: new Date(game.date.$date)

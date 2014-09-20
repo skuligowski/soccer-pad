@@ -39,7 +39,7 @@
 			<td>{{tableRow.name}}</td>
 			<td>{{tableRow.games}}</td>
 			<td>{{tableRow.winPerc.toFixed(0)}}%</td>
-			<td class="rating">{{tableRow.mean.toFixed(2)}} <span class="sd">± {{tableRow.sd.toFixed(2)}}</span></td>
+			<td class="rating">{{tableRow.mean.toFixed(2)}}</td>
 			<td class="rating-change" ng-class="{decrease: !tableRow.meanUp, increase: tableRow.meanUp}">
 				<span class="glyphicon" ng-class="{'glyphicon-chevron-down': !tableRow.meanUp, 'glyphicon-chevron-up': tableRow.meanUp}"></span>
 				<span class="value">{{tableRow.change.toFixed(2)}}</span>
