@@ -1,13 +1,22 @@
 angular.module('myApp', [
 	'ngAnimate',
 	'views.table',
-	'views.players',
+	'views.ratings',
+	'views.settings',
 	'views.games'
 ]).
 
 controller('AppCtrl', ['$scope', function($scope) {
-	$scope.table = {A: null, B: null, C: null, D: null};
+		
+	$scope.table = {
+		whiteDefender: null, 
+		whiteAttacker: null, 
+		blueDefender: null,
+		blueAttacker: null 
+	};
+
 	$scope.score = {white: 10, blue: 10};
+	
 	$scope.playerSort = {
 		column: 'mean',
 		descending: true

@@ -2,6 +2,13 @@ html {
 	overflow-y: scroll; 
 }
 
+
+.players tr.disabled {
+	background: #f8f8f8;
+	color: #dedede;
+}
+
+
 .player-selector {
 	position: absolute;
 	font-size:30px;
@@ -58,12 +65,58 @@ html {
 	margin-top: 14px;
 }
 
+.game-date .date {
+	font-weight: bold;
+}
+
+.game-date .time {
+	margin-left: 5px;
+	font-size: 9px;
+}
+
+
+.rating {
+	font-weight: bold;
+}
+
+.rating .sd {
+	font-weight: normal;
+	font-size: 11px; 
+	color: #999
+}
+
+.rating-change {
+	position: relative;
+}
+
+.rating-change .glyphicon {
+	position: absolute;
+	font-size: 10px;
+}
+
+.rating-change .glyphicon.glyphicon-chevron-down,
+.rating-change .glyphicon.glyphicon-chevron-up  {
+	top: 13px;
+}
+
+.rating-change .value {
+	margin-left: 10px;
+}
+
+.rating-change.increase {
+	color: green;
+}
+
+.rating-change.decrease {
+	color: red;
+}
+
 .view-animate {
 }
  
 .view-animate.ng-enter, .view-animate.ng-leave {
-  -webkit-transition:opacity ease-in-out 0.3s;
-  transition:opacity ease-in-out 0.3s;
+  -webkit-transition:opacity ease-in-out 0.15s;
+  transition:opacity ease-in-out 0.15s;
   opacity: 1;
 }
  

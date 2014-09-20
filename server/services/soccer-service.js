@@ -1,111 +1,92 @@
-var MongoClient = require('mongodb').MongoClient;
-var Players = require('./players');
-var Games = require('./games');
-var Ratings = require('./ratings');
-var myDb;
+var Ratings = require('./ratings'),
+    _ = require('lodash'),    
+    db = require('./db-queries'),
+    soccer = require('./soccer-manager'),
+    playerConverter = require('./converters').playerConverter,
+    gameConverter = require('./converters').gameConverter,
+    Q = require('q');
 
-var connect = function() {
-    MongoClient.connect('mongodb://127.0.0.1:27017/soccer-pad', function (err, db) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        myDb = db;
 
-        calculateStats(myDb);
-    });
+var errorHandler = function(res) {
+    return function(err) {
+        console.log(err);
+        res.send(400);
+    }
 }
-
-connect();
 
 exports.init = function(server) {
 
-	server.get('/api/init', function(req, res) {
-		retrieveStats(myDb, function(players, playersStats, playersRatings)  {
-            Games.find(myDb, function(games) {
-                var data = {
-                    players: players,
-                    stats: {
-                        players: playersStats,
-                        ratings : playersRatings
-                    },
-                    games: games
-                };
-                res.send(data);
+    server.get('/api/init', function(req, res) {        
+        Q.all([db.findPlayers(), db.findGames(20), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
+        spread(function(players, games, periods, ratings) {
+            res.send({
+                players: _.map(players, playerConverter()),
+                games: _.map(games, gameConverter()),
+                periods: periods,
+                ratings: ratings
             });
-		});
-	});
+        }).catch(errorHandler(res));
+    });
 
-	server.post('/api/players/add', function(req, res) {
-		var data = req.body; 
-		var collection = myDb.collection('players'),
-			lcName = data.name.toLowerCase();
-		
-		collection.update(
-			{uid: lcName}, 
-			{ $set: {
-				name: data.name,
-				uid: lcName
-			} }, 
-			{upsert: true, safe: true},
-			function() {
-				retrieveStats(myDb, function(players, playersStats, playersRatings) {
-                    var data = {
-                        players: players,
-                        stats: {
-                            players: playersStats,
-                            ratings : playersRatings
-                        }
-                    };
-                    res.send(data);
-				});
-			}
-		);
-	});
+    server.post('/api/ratings/recalculate', function(req, res) {
+        soccer.recalculateRatings()
+        .then(function() {
+            return Q.all([db.findAllRatingPeriods(), db.findAllRatingsMap()]);
+        }).spread(function(periods, ratings) {
+            res.send({
+                periods: periods,
+                ratings: ratings
+            });
+        }).catch(errorHandler(res));
+    });
+
+    server.post('/api/games/delete/:gameId', function(req, res) {
+        var gameId = req.params.gameId;            
+        soccer.deleteGame(gameId)
+        .then(db.findAllRatingsMap)
+        .then(function(ratings) {
+            res.send({ ratings : ratings});
+        }).catch(errorHandler(res));
+    });
 
 	server.post('/api/games/add', function(req, res) {
-		var game = req.body; 
-		game.date = new Date();
-		var collection = myDb.collection('games');
-        collection.insert(game,
-            {safe: true},
-            function(err, addedGames) {
-                calculateStats(myDb, function() {
-                    retrieveStats(myDb, function(players, playersStats, playersRatings) {
-                        var data = {
-                            stats: {
-                                players: playersStats,
-                                ratings : playersRatings
-                            },
-                            game: addedGames[0]
-                        };
-                       res.send(data)
-                    });
-                });
-
-            }
-		);	
+		var game = req.body;
+        soccer.addGame(game)
+        .then(function() {
+            return Q.all([db.findAllRatingPeriods(), db.findAllRatingsMap()]);
+        }).spread(function(periods, ratings) {
+            res.send({
+                game: gameConverter()(game),
+                ratings: ratings,
+                periods: periods
+            });
+        }).catch(errorHandler(res));
 	});
+
+    server.post('/api/players/disable', function(req, res) {
+        var player = req.body;
+        db.setPlayerStatus(player.uid, 'D').then(function() {
+            res.send({});
+        }).catch(errorHandler(res));
+    });
+
+    server.post('/api/players/activate', function(req, res) {
+        var player = req.body;
+        db.setPlayerStatus(player.uid, 'A').then(function() {
+            res.send({});
+        }).catch(errorHandler(res));
+    });
+
+    server.post('/api/players/add', function(req, res) {
+        var player = req.body;
+        soccer.addPlayer(player)
+        .then(db.findPlayers)
+        .then(function(players) {
+            res.send({
+                players: _.map(players, playerConverter())
+            });
+        }).catch(errorHandler(res));
+    });
+
 }
 
-var calculateStats = function(db, callback ) {
-    var playersCollection = myDb.collection('players'),
-        gamesCollection = myDb.collection('games');
-    Players.calculateStats(db, gamesCollection, function(errP) {
-        Ratings.calculate(db, playersCollection, gamesCollection, function(errR) {
-            errP && console.log(errP);
-            errR && console.log(errR);
-            console.log('Players aggregates regenerated ... ');
-            callback && callback();
-        });
-    });
-}
-
-var retrieveStats = function(db, callback ) {
-    var playersCollection = db.collection('players');
-    Players.find(db, playersCollection, function(players, playersStats) {
-        Ratings.find(db, playersCollection, function(playersRatings) {
-            callback && callback(players, playersStats, playersRatings);
-        });
-    });
-}

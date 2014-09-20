@@ -11,22 +11,25 @@
 				<th></th>
 				<th>Score</th>
 				<th>Label</th>
+				<th style="text-align: right"></th>
 			</tr>
 		</thead>
-		<tr ng-repeat="game in paged.games" >
-			<td class="col-xs-3">{{game.date}}</td>
-			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.A].name}}</td>
-			<td class="col-xs-1">{{model.playersMapping[game.table.B].name}}</td>
+		<tr ng-repeat="game in model.games" ng-class="{today: game.today}">
+			<td class="col-xs-3"><span class="label label-warning" ng-show="game.today" style="margin-right: 10px">Today</span><div game-date="{{game.date}}"></div></td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.whiteDefender].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.whiteAttacker].name}}</td>
 			<td class="col-xs-1"></td>
-			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.table.D].name}}</td>
-			<td class="col-xs-1">{{model.playersMapping[game.table.C].name}}</td>
+			<td class="col-xs-1" style="text-align:right;">{{model.playersMapping[game.blueDefender].name}}</td>
+			<td class="col-xs-1">{{model.playersMapping[game.blueAttacker].name}}</td>
 			<td class="col-xs-1"></td>
-			<td class="col-xs-1">{{game.score.white}} : {{game.score.blue}}</td>
-			<td class="col-xs-2">
+			<td class="col-xs-1">{{game.whiteScore}} : {{game.blueScore}}</td>
+			<td class="col-xs-1">
 				<span class="label label-info" ng-show="game.new">New</span>
-				<span class="label label-success" ng-show="!game.score.white || !game.score.blue">{{game.score.white}} : {{game.score.blue}}</span>
+				<span class="label label-success" ng-show="!game.whiteScore || !game.blueScore">{{game.whiteScore}} : {{game.blueScore}}</span>				
+			</td>
+			<td class="col-xs-1" style="text-align: right">
+				<a href="#" ng-show="game.removable" ng-click="deleteGame(game.id)"><span class="glyphicon glyphicon-remove"></span></a>
 			</td>
 		</tr>
 	</table>
-	<div pager source="model.games" out="paged.games" page-size="10" buttons="5"></div>
 </div>

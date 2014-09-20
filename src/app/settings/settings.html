@@ -1,0 +1,16 @@
+<div ng-controller="SettingsCtrl" ng-init="selectedItem = 'players'">
+
+	<div class="list-group col-md-4 column" selectable-list="selectedItem">
+	  <a href="#" class="list-group-item" ng-class="{active: selectedItem=='players'}" list-item="players">
+	    <h4 class="list-group-item-heading">Players</h4>
+	    <p class="list-group-item-text">Adding, removing or hidding players</p>
+	  </a>
+	  <a href="#" class="list-group-item" ng-class="{active: selectedItem=='options'}" list-item="options">
+	    <h4 class="list-group-item-heading">Ratings options</h4>
+	    <p class="list-group-item-text">Settings paramters, recalculating all ratings again.</p>
+	  </a>
+	</div>
+	
+	<div ng-include src="selectedItem" class="view-animate col-md-8 column"> 
+	</div>
+</div>

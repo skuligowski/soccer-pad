@@ -97,7 +97,11 @@ directive('btsCombo', ['$document', 'btsDropdown', function($document, btsDropdo
 	return {
 		restrict: 'A',
 		require: ['btsCombo', 'ngModel'],
-		templateUrl: 'btsCombo',
+		templateUrl: function (tElement, tAttrs) {
+            if (tAttrs.template)
+                return tAttrs.template;
+            return 'btsCombo';
+        },
 		replace: true,
 		transclude: true,
 		controller: ['$scope', function($scope) {

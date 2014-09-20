@@ -1,12 +1,9 @@
 {
-  "name": "soccer-pad",
+  "name": "soccer-pad-utils",
   "description": "The best way to note your scores",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "3.x",
-    "jstrueskill": "0.0.0",
-    "mysql": "2.4.3",
     "q": "1.0.1",
     "lodash": "2.4.1",
     "unidecode": "0.1.3"

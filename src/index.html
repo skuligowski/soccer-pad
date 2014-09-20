@@ -15,12 +15,18 @@
   <!-- JavaScript files for the application -->
   <script src="app/app.js"></script>
   <script src="app/data/data-source.js"></script>
+  <script src="app/common/filters/disabled-player-filter.js"></script>
   <script src="app/controls/tabs/tabs.js"></script>
   <script src="app/controls/bts-combo/bts-combo.js"></script>
   <script src="app/controls/player-selector/player-selector.js"></script>
   <script src="app/controls/pager/pager.js"></script>
   <script src="app/controls/sortable/sortable.js"></script>
-  <script src="app/players/players.js"></script>
+  <script src="app/controls/game-date/game-date.js"></script>
+  <script src="app/ratings/ratings.js"></script>
+  <script src="app/settings/selectable-list.js"></script>
+  <script src="app/settings/settings.js"></script>
+  <script src="app/settings/players/players.js"></script>
+  <script src="app/settings/options/options.js"></script>
   <script src="app/table/table.js"></script>
   <script src="app/games/games.js"></script>
   
@@ -38,12 +44,16 @@
 <body>
 
   <!-- Preloaded templates used in directives -->
-  <%template id="btsCombo" src="app/controls/player-selector/selector-dropdown.html"%>
+  <%template id="btsCombo" src="app/controls/bts-combo/bts-combo.html"%>
+  <%template id="selectorDropdown" src="app/controls/player-selector/selector-dropdown.html"%>
   <%template id="playerSelector" src="app/controls/player-selector/player-selector.html"%>
   <%template id="sortable" src="app/controls/sortable/sortable.html"%>
   <%template id="pager" src="app/controls/pager/pager.html"%>
   <%template id="table" src="app/table/table.html"%>
-  <%template id="players" src="app/players/players.html"%>
+  <%template id="ratings" src="app/ratings/ratings.html"%>
+  <%template id="settings" src="app/settings/settings.html"%>
+  <%template id="players" src="app/settings/players/players.html"%>
+  <%template id="options" src="app/settings/options/options.html"%>
   <%template id="games" src="app/games/games.html"%>
 
   <!-- Application content -->

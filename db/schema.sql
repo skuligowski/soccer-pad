@@ -1,0 +1,57 @@
+DROP DATABASE IF EXISTS soccer_pad;
+CREATE DATABASE soccer_pad CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+USE soccer_pad;
+
+DROP TABLE IF EXISTS players;
+
+CREATE TABLE players (
+	uid VARCHAR(64) NOT NULL,
+	name VARCHAR(128),
+	status CHAR DEFAULT 'A' NOT NULL, -- D - disabled, R - removed, A - active
+PRIMARY KEY (uid)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS games;
+
+CREATE TABLE games (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	blueDefender VARCHAR(64) NOT NULL,
+	blueAttacker VARCHAR(64) NOT NULL,
+	whiteDefender VARCHAR(64) NOT NULL,
+	whiteAttacker VARCHAR(64) NOT NULL,
+	blueScore INT NOT NULL,
+	whiteScore INT NOT NULL,
+	date DATETIME,
+PRIMARY KEY (id)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS rating_periods;
+
+CREATE TABLE rating_periods (
+	uid VARCHAR(64) NOT NULL,
+	title VARCHAR(64) NOT NULL,
+	fromDate DATETIME NOT NULL,
+	toDate DATETIME NOT NULL,
+PRIMARY KEY (uid)) ENGINE = InnoDB;
+
+
+DROP TABLE IF EXISTS ratings;
+
+CREATE TABLE ratings (
+	periodUid VARCHAR(64) NOT NULL,
+	playerUid VARCHAR(64) NOT NULL,
+	tsMean DECIMAL(20,16) NOT NULL,
+	tsSd DECIMAL(20,16) NOT NULL,
+	tsMeanChange DECIMAL(20,16) NOT NULL, 
+	bATotal INT NOT NULL DEFAULT 0,
+	bAWins INT NOT NULL DEFAULT 0,
+	bDTotal INT NOT NULL DEFAULT 0,
+	bDWins INT NOT NULL DEFAULT 0,
+	wATotal INT NOT NULL DEFAULT 0,
+	wAWins INT NOT NULL DEFAULT 0,
+	wDTotal INT NOT NULL DEFAULT 0,
+	wDWins INT NOT NULL DEFAULT 0,
+	greenBadgesTotal INT NOT NULL DEFAULT 0,
+PRIMARY KEY(periodUid, playerUid)) ENGINE = InnoDB;
+

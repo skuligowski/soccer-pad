@@ -1,10 +1,15 @@
 angular.module('views.table', [
 	'data.dataSource', 
 	'controls.playerSelector',
-	'controls.tabs'
+	'controls.tabs',
+	'filter.disabledPlayer'
 ]).
 
-controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
+controller('TableCtrl', ['$scope', 'dataSource', '$filter', function($scope, dataSource, $filter) {
+
+	$scope.$watch('model.players', function(players) {
+		$scope.players = $filter('disabledPlayerFilter')($scope.model.players);
+	});
 
 	var watchPosition = function(currentPlayer, position) {
 		$scope.$watch('table.'+position, function(newPlayer, oldPlayer) {
@@ -13,7 +18,7 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 			angular.forEach($scope.table, function(player, index) {
 				if (index == position) return;
 
-				if (player && player._id == newPlayer._id)
+				if (player && player.uid == newPlayer.uid)
 					$scope.table[index] = null;
 			});
 		});
@@ -45,16 +50,12 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 
 	$scope.save = function() {
 		var game = {
-			table: {
-				A: $scope.table.A._id,
-				B: $scope.table.B._id,
-				C: $scope.table.C._id,
-				D: $scope.table.D._id
-			},
-			score: {
-				white: parseInt($scope.score.white),
-				blue: parseInt($scope.score.blue)
-			}
+			whiteDefender: $scope.table.whiteDefender.uid,
+			whiteAttacker: $scope.table.whiteAttacker.uid,
+			blueDefender: $scope.table.blueDefender.uid,
+			blueAttacker: $scope.table.blueAttacker.uid,
+			whiteScore: parseInt($scope.score.white),
+			blueScore: parseInt($scope.score.blue)
 		};
 		dataSource.addGame(game);
 		$scope.app.tab = {
@@ -64,6 +65,5 @@ controller('TableCtrl', ['$scope', 'dataSource', function($scope, dataSource) {
 	};
 
 	angular.forEach($scope.table, watchPosition);
-
 }]);
 

@@ -4,18 +4,17 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 	var model = { 
 		players: [],
 		playersMapping: {},
-		games: []
+		games: [],
+		ratings: {},
+		periods: []
 	};
-	var stats = {
-		players: {}
-	};
+	var ratings = {};
 	$rootScope.model = model;
-	$rootScope.stats = stats;
 
 	var createPlayersMapping = function(players) {
 		var mapping = {};
 		for(var i = 0; i < players.length; i++)
-			mapping[players[i]._id] = players[i];
+			mapping[players[i].uid] = players[i];
 		return mapping;
 	};
 
@@ -23,8 +22,8 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 		model.players = data.players;
 		model.playersMapping = createPlayersMapping(data.players);
 		model.games = data.games;
-		stats.players = data.stats.players;
-        stats.ratings = data.stats.ratings;
+		model.ratings = data.ratings;
+		model.periods = data.periods;
 	});
 
 	return {
@@ -32,18 +31,43 @@ factory('dataSource', ['$http', '$rootScope', function($http, $rootScope) {
 			$http.post('/api/players/add', {name: name}).success(function(data) {
 				model.players = data.players;
 				model.playersMapping = createPlayersMapping(data.players);
-				stats.players = data.stats.players;
-                stats.ratings = data.stats.ratings;
+			});
+		},
+		disablePlayer: function(playerUid) {
+			$http.post('/api/players/disable', {uid: playerUid}).success(function(data) {
+				model.playersMapping[playerUid].disabled = true;
+				model.players = [].concat(model.players);
+			});
+		},
+		activatePlayer: function(playerUid) {
+			$http.post('/api/players/activate', {uid: playerUid}).success(function(data) {
+				model.playersMapping[playerUid].disabled = false;
+				model.players = [].concat(model.players);
 			});
 		},
 		addGame: function(game) {
 			$http.post('/api/games/add', game).success(function(data) {
-			    stats.players = data.stats.players;
-                stats.ratings = data.stats.ratings;
-				data.game.new = true;
 				model.games.splice(0, 0, data.game);
 				model.games = model.games.concat([]);
+				model.ratings = data.ratings;
+				model.periods = data.periods;
 			});
-		} 
+		},
+		deleteGame: function(gameId) {
+			$http.post('/api/games/delete/' + gameId).success(function(data) {
+				for(var i = 0; i < model.games.length; i++) {
+					if (model.games[i].id === gameId)
+						model.games.splice(i, 1);
+				}
+				model.games = [].concat(model.games);
+				model.ratings = data.ratings;
+			});
+		},
+		recalculateRatings: function() {
+			$http.post('/api/ratings/recalculate').success(function(data) {
+				model.ratings = data.ratings;
+				model.periods = data.periods;
+			});			
+		}
 	}
 }]);
