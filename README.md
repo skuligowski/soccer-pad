@@ -15,10 +15,10 @@ Our goal is to create a simple way of adding soccer scores. The way that doesn't
 4. Clone the project: `git clone git@github.com:<github username>/soccer-pad.git`
 5. Go to the *Soccer Pad* directory: `cd soccer-pad`
 6. Add the main *Soccer Pad* repository as an upstream remote to your repository:
-`git remote add upstream https://github.com/kuligowski/soccer-pad.git`
+`git remote add upstream https://github.com/skuligowski/soccer-pad.git`
 7. Go to the *db* directory: `cd db`
-8. Log as root to the *mysql* database and type `source schema.sql` - it will create soccer pads database schema
-9. Type `source data.sql` to add example data to the database
+8. Log as **root** to the *mysql* database and type `source schema.sql` - it will create soccer pads database schema
+9. Type `source data.sql` to add an example data to the database
 8. Exit *mysql* and go to the *server* directory: `cd server`
 8. Install *node.js* dependencies: `npm install`
 
