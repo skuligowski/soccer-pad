@@ -2,6 +2,7 @@ var Ratings = require('./ratings'),
     _ = require('lodash'),    
     db = require('./db-queries'),
     gameConverter = require('./converters').gameConverter,
+    unidecode = require('unidecode'),
     Q = require('q');
 
 var updateRatingsForPeriod = function(db, periodUid) {
@@ -71,7 +72,7 @@ exports.deleteGame = function(gameId) {
 
 exports.addPlayer = function(player) {
     return db.addPlayer({
-        uid: player.name.toLowerCase().replace(/ /, ""),
+        uid: unidecode(player.name.toLowerCase().replace(/[ \.]/g, "")),
         name: player.name,
         status: 'A'
     });
