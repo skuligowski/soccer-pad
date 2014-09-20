@@ -3,7 +3,7 @@ Soccer Pad
 
 The web application that allows to note scores of soccer games easily, view player stats and compare your performance with others.
 
-### *Trueskill(TM)* ratings
+### *TrueSkill(TM)* ratings
 
 The Soccer Pad uses TrueSkill(TM) alghorithm (http://research.microsoft.com/en-us/projects/trueskill/) to calculate ratings for all players. The rating system has been used on XBOX Live platform to rank users. It was developed by Microsoft Research.
 
