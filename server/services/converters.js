@@ -3,7 +3,7 @@ var zpad = function(value) {
 }
 
 Date.prototype.toISOString = function() {
-	return this.getFullYear() + '-' + zpad(this.getMonth()) + '-' + zpad(this.getDate()) + 'T' + zpad(this.getHours()) + ':' + zpad(this.getMinutes()) + ':' + zpad(this.getSeconds());
+	return this.getFullYear() + '-' + zpad(this.getMonth() + 1) + '-' + zpad(this.getDate()) + 'T' + zpad(this.getHours()) + ':' + zpad(this.getMinutes());
 }
 
 exports.playerConverter = function() {
