@@ -1,14 +1,15 @@
 var mysql = require('mysql');
 var _ = require('lodash');
 var Q = require('q');
+var dbConfig = require('./../config/db-config');
 
 var pool = mysql.createPool({
   dateStrings: false,
   connectionLimit: 10,
-  host: 'localhost',
-  database: 'soccer_pad',
-  user: 'root',
-  password: ''
+  host: dbConfig.host,
+  database: dbConfig.database,
+  user: dbConfig.user,
+  password: dbConfig.password
 });
 
 module.exports = function() {
