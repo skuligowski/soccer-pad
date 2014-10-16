@@ -47,11 +47,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-htmlrender');
   grunt.loadNpmTasks('grunt-nodemon');
 
-  grunt.registerTask('watch:app', ['build', 'concurrent:app']);
   grunt.registerTask('build:app', ['clean:app', 'copy:app', 'less:build', 'htmlrender:build']);
-  grunt.registerTask('build', ['clean:all', 'copy:assets', 'build:app', 'copy:assets']);
+  grunt.registerTask('build', ['clean:all', 'copy:assets', 'build:app']);
   grunt.registerTask('release', ['clean:all', 'copy:assets', 'less:release', 'uglify:app', 'htmlrender:release']);
-  grunt.registerTask('default', ['watch:app']);
+  grunt.registerTask('watch:build', ['build', 'concurrent:app']);
+  grunt.registerTask('default', ['watch:build']);
 
   grunt.registerTask('help', function() {
     grunt.log.ok('grunt - the same as grunt watch:app');
@@ -69,7 +69,7 @@ module.exports = function (grunt) {
       vars: {
         scriptsPath: 'scripts.html',
         scriptsFiles: function() { return getScriptsFiles('dist', ['app/**/*.js']) },
-        stylesPath: 'css/index.css'
+        stylesPath: 'styles.html'
       }
     },
     files: [{
@@ -87,7 +87,8 @@ module.exports = function (grunt) {
       vars: {
         scriptsPath: 'scripts.min.html',
         scriptsFiles: function() { return getScriptsFiles('dist', ['app/**/*.js']) },
-        stylesPath: 'css/app.<%=timestamp%>.css'
+        stylesPath: 'styles.min.html',
+        timestamp: '<%=timestamp%>'
       }
     },
     files: [{
@@ -146,7 +147,7 @@ module.exports = function (grunt) {
       interval: 200,
       spawn: false
     },
-    files: ['/*', '/app/**/*', '/includes/**/*', '/css/**/*'],
+    files: ['*', 'app/**/*', 'includes/**/*', 'css/**/*'],
     tasks: ['build:app']
   });
 
