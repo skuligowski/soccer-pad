@@ -1,1 +1,0 @@
-nohup node server 9999 > server.log &
