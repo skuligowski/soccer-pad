@@ -38,17 +38,5 @@ app.get('/*', function(req, res, next) {
     next();
 });
 
-if (config.ssl) {
-    var options = {
-        key: fs.readFileSync('./ssl/server.key'),
-        cert: fs.readFileSync('./ssl/server.crt'),
-    };
-
-    var server = https.createServer(options, app).listen(config.listenPort, function(){
-      console.log('Express server listening on port ' + config.listenPort + ' with SSL');
-    });
-} else {
-    app.listen(config.listenPort);
-    console.log('Express server listening on port ' + config.listenPort);
-}
-
+app.listen(config.listenPort);
+console.log('Express server listening on port ' + config.listenPort);
