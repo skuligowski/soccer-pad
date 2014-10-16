@@ -4,7 +4,7 @@ var express = require('express'),
     compress = require('compression')(),
     fs = require('fs'),
     path = require('path'),
-    config = require('./config'),
+    config = require('./config/server-config'),
     mime = require('mime'),
     mustache = require('./lib/mustache');
 
