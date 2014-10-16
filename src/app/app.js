@@ -1,4 +1,4 @@
-angular.module('myApp', [
+angular.module('soccerPad', [
 	'ngAnimate',
 	'views.table',
 	'views.ratings',

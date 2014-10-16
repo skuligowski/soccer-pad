@@ -1,35 +1,15 @@
 <!doctype html>
-<html lang="en" ng-app="myApp">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Soccer Pad</title>
-  
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
 
-  <!-- Libraries -->
-  <script src="vendor/jquery/1.10.2/jquery.js"></script>
-  <script src="vendor/angular/1.2.2/angular.js"></script>
-  <script src="vendor/angular/1.2.2/angular-animate.js"></script>
-  
-  <!-- JavaScript files for the application -->
-  <script src="app/app.js"></script>
-  <script src="app/data/data-source.js"></script>
-  <script src="app/common/filters/disabled-player-filter.js"></script>
-  <script src="app/controls/tabs/tabs.js"></script>
-  <script src="app/controls/bts-combo/bts-combo.js"></script>
-  <script src="app/controls/player-selector/player-selector.js"></script>
-  <script src="app/controls/pager/pager.js"></script>
-  <script src="app/controls/sortable/sortable.js"></script>
-  <script src="app/controls/game-date/game-date.js"></script>
-  <script src="app/ratings/ratings.js"></script>
-  <script src="app/settings/selectable-list.js"></script>
-  <script src="app/settings/settings.js"></script>
-  <script src="app/settings/players/players.js"></script>
-  <script src="app/settings/options/options.js"></script>
-  <script src="app/table/table.js"></script>
-  <script src="app/games/games.js"></script>
-  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <%include src="includes/<%=stylesPath%>"%>  
+
   <style type="text/css">
     .blue {
       background: #037ECF !important;
@@ -40,6 +20,9 @@
       color: black;
     }
   </style>
+
+  <%include src="includes/loader.html"%>  
+
 </head>
 <body>
 
@@ -59,5 +42,14 @@
   <!-- Application content -->
   <%include src="app/app.html"%>
   
+  <!-- Scripts asynchronous loading !-->
+  <%include src="includes/<%=scriptsPath%>"%>
+
+  <script>
+    $script.ready('scripts', function() {
+      angular.module('config', []).constant('config', {});
+      angular.bootstrap(document, ['soccerPad']);
+    });
+  </script>
 </body>
 </html>

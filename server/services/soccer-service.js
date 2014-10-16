@@ -14,7 +14,7 @@ var errorHandler = function(res) {
     }
 }
 
-exports.init = function(server) {
+module.exports = function(server) {
 
     server.get('/api/init', function(req, res) {        
         Q.all([db.findPlayers(), db.findGames(20), db.findAllRatingPeriods(), db.findAllRatingsMap()]).
