@@ -50,7 +50,7 @@ module.exports = function (grunt) {
   grunt.registerTask('watch:app', ['build', 'concurrent:app']);
   grunt.registerTask('build:app', ['clean:app', 'copy:app', 'less:build', 'htmlrender:build']);
   grunt.registerTask('build', ['clean:all', 'copy:assets', 'build:app', 'copy:assets']);
-  grunt.registerTask('release', ['clean:all', 'copy:assets', 'release:app']);
+  grunt.registerTask('release', ['clean:all', 'copy:assets', 'less:release', 'uglify:app', 'htmlrender:release']);
   grunt.registerTask('default', ['watch:app']);
 
   grunt.registerTask('help', function() {
@@ -58,7 +58,6 @@ module.exports = function (grunt) {
     grunt.log.ok('grunt build - complete build');
     grunt.log.ok('grunt release - complete build for production');
   });
-
 
   var config = getConfig();
 
