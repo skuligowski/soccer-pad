@@ -47,14 +47,14 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-htmlrender');
   grunt.loadNpmTasks('grunt-nodemon');
 
-  grunt.registerTask('build:app', ['clean:app', 'copy:app', 'less:build', 'htmlrender:build']);
   grunt.registerTask('build', ['clean:all', 'copy:assets', 'build:app']);
+  grunt.registerTask('build:app', ['clean:app', 'copy:app', 'less:build', 'htmlrender:build']);
   grunt.registerTask('release', ['clean:all', 'copy:assets', 'less:release', 'uglify:app', 'htmlrender:release']);
   grunt.registerTask('watch:build', ['build', 'concurrent:app']);
   grunt.registerTask('default', ['watch:build']);
 
   grunt.registerTask('help', function() {
-    grunt.log.ok('grunt - the same as grunt watch:app');
+    grunt.log.ok('grunt - builds the application and watches for changes, starts the server');
     grunt.log.ok('grunt build - complete build');
     grunt.log.ok('grunt release - complete build for production');
   });
@@ -109,7 +109,6 @@ module.exports = function (grunt) {
     }]
   });
 
-
   config.add('less:build', {
     options: {
       sourceMap: true,
@@ -132,10 +131,6 @@ module.exports = function (grunt) {
     dest: 'dist/css/app.<%=timestamp%>.css'
   })
 
-  config.add('clean:assets',
-    ['dist/img', 'dist/fonts', 'dist/favicon.ico']
-  );
-
   config.add('uglify:app', {
     src: ['src/app/**/*.js'],
     dest: 'dist/app/app.<%=timestamp%>.js'
@@ -151,18 +146,8 @@ module.exports = function (grunt) {
     tasks: ['build:app']
   });
 
-  config.add('watch:assets', {
-    options: {
-      cwd: 'src',
-      interval: 1000,
-      spawn: false
-    },
-    files: ['/img/**/*', '/fonts/**/*', '/vendor/**/*'],
-    tasks: ['assets:app']
-  });
-
   config.add('concurrent:app', {
-    tasks: ['watch:app', 'watch:assets', 'nodemon:express'],
+    tasks: ['watch:app', 'nodemon:express'],
     options: {
       logConcurrentOutput: true
     }
